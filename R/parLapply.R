@@ -37,7 +37,9 @@ worker <- function(name) {
         con <- file(paste(dbl$name, "FUN", sep = "."), "rb")
         FUN <- unserialize(con)
         close(con)
-        
+
+        if(isEmptyS(dbl))
+                return(invisible(NULL))
         repeat {
                 while(inherits(obj <- try(popS(dbl)), "try-error"))
                         next
@@ -49,4 +51,10 @@ worker <- function(name) {
                         next
                 Sys.sleep(0.5)
         }
+        invisible(NULL)
+}
+
+isEmptyS <- function(dbl) {
+        obj <- headS(dbl)
+        is.null(obj)
 }
