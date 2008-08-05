@@ -26,7 +26,7 @@ plapply <- function(X, FUN, name = NULL) {
 
                 while(inherits(try(pushS(p$rdb, result)), "try-error"))
                         next
-                Sys.sleep(0.5)
+                ## Sys.sleep(0.5)
         }
 }
 
@@ -43,6 +43,7 @@ getFUN <- function(db) {
 pollWorker <- function(name) {
         repeat {
                 try(worker(name), silent = TRUE)
+                Sys.sleep(0.5)
         }
 }
 
@@ -63,7 +64,7 @@ worker <- function(name) {
 
                 while(inherits(try(pushS(rdb, result)), "try-error"))
                         next
-                Sys.sleep(0.5)
+                ## Sys.sleep(0.5)
         }
         invisible(NULL)
 }
