@@ -1,23 +1,21 @@
 library(filehash)
 
 plapply <- function(X, FUN, name = NULL) {
-        ## Make shared "memory" stack
+        ## Make "shared memory" stack
         if(is.null(name))
                 name <- filehash:::sha1(X)
-        dbl <- createS(name)
-        putS(dbl, X)
+        db <- createS(name)
+        pushS(db, X)
 
-        ## A stack for the data 'X'
-        rdbname <- paste(dbl$name, "result", sep = ".")
+        ## A stack for the results
+        rdbname <- paste(db$name, "result", sep = ".")
         rdb <- createS(rdbname)
 
-        ## Share the function 'FUN'
-        con <- file(paste(dbl$name, "FUN", sep = "."), "wb")
-        serialize(FUN, con)
-        close(con)
+        ## Share the function via "shared memory"
+        dbInsert(db, "FUN", FUN)
         
         repeat {
-                while(inherits(obj <- try(popS(dbl)), "try-error"))
+                while(inherits(obj <- try(popS(db)), "try-error"))
                         next
                 if(is.null(obj))
                         break
@@ -30,18 +28,15 @@ plapply <- function(X, FUN, name = NULL) {
 }
 
 worker <- function(name) {
-        dbl <- initS(name)
-        rdbname <- paste(dbl$name, "result", sep = ".")
+        db <- initS(name)
+        rdbname <- paste(db$name, "result", sep = ".")
         rdb <- initS(rdbname)
+        FUN <- dbFetch(db, "FUN")
 
-        con <- file(paste(dbl$name, "FUN", sep = "."), "rb")
-        FUN <- unserialize(con)
-        close(con)
-
-        if(isEmptyS(dbl))
+        if(isEmptyS(db))
                 return(invisible(NULL))
         repeat {
-                while(inherits(obj <- try(popS(dbl)), "try-error"))
+                while(inherits(obj <- try(popS(db)), "try-error"))
                         next
                 if(is.null(obj))
                         break
@@ -54,7 +49,3 @@ worker <- function(name) {
         invisible(NULL)
 }
 
-isEmptyS <- function(dbl) {
-        obj <- headS(dbl)
-        is.null(obj)
-}
