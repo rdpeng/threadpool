@@ -2,7 +2,7 @@ library(filehash)
 
 pStack <- function(name) {
         ## A stack for the results
-        rdbname <- paste(db$name, "result", sep = ".")
+        rdbname <- paste(name, "result", sep = ".")
         list(db = createS(name),
              rdb = createS(rdbname))
 }
@@ -16,18 +16,7 @@ plapply <- function(X, FUN, name = NULL) {
 
         ## Share the function via "shared memory"
         setFUN(p$db, FUN)
-        
-        repeat {
-                while(inherits(obj <- try(popS(p$db)), "try-error"))
-                        next
-                if(is.null(obj))
-                        break
-                result <- FUN(obj)
-
-                while(inherits(try(pushS(p$rdb, result)), "try-error"))
-                        next
-                ## Sys.sleep(0.5)
-        }
+        worker(name)
 }
 
 setFUN <- function(db, FUN) {
