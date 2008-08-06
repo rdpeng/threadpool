@@ -12,11 +12,27 @@ plapply <- function(X, FUN, name = NULL) {
         if(is.null(name))
                 name <- filehash:::sha1(X)
         p <- pStack(name)
-        mpushS(p$db, X)
-
         ## Share the function via "shared memory"
         setFUN(p$db, FUN)
+
+        ## Send the data out
+        mpushS(p$db, X)
+
         worker(name)
+
+        ## Wait for other workers to finish
+        while(!isEmptyS(p$db))
+                Sys.sleep(0.5)
+        getResults(name)
+}
+
+getResults <- function(name) {
+        db <- dbInit(paste(name, "result", sep = "."))
+        keys <- dbList(db)
+        keys <- keys[keys != "top"]
+        obj <- dbMultiFetch(db, keys)
+        obj <- lapply(obj, "[[", "value")
+        unname(obj)
 }
 
 setFUN <- function(db, FUN) {
@@ -45,15 +61,18 @@ worker <- function(name) {
         if(isEmptyS(db))
                 return(invisible(NULL))
         repeat {
-                while(inherits(obj <- try(popS(db)), "try-error"))
-                        next
+                while(inherits(obj <- try(popS(db), silent = TRUE),
+                               "try-error")) {
+                        Sys.sleep(0.1)
+                }
                 if(is.null(obj))
                         break
                 result <- FUN(obj)
 
-                while(inherits(try(pushS(rdb, result)), "try-error"))
-                        next
-                ## Sys.sleep(0.5)
+                while(inherits(try(pushS(rdb, result), silent = TRUE),
+                               "try-error")) {
+                        Sys.sleep(0.1)
+                }
         }
         invisible(NULL)
 }
