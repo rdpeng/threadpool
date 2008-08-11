@@ -16,8 +16,10 @@ plapply <- function(X, FUN, name = NULL) {
         setFUN(p$db, FUN)
 
         ## Send the data out
+        message("pushing data")
         mpush(p$db, X)
 
+        message("starting worker")
         worker(name)
 
         ## Wait for other workers to finish
@@ -61,21 +63,23 @@ worker <- function(name) {
         rdb <- initS(rdbname)
         FUN <- getFUN(db)
 
-        if(isEmpty(db))
-                return(invisible(NULL))
         repeat {
-                while(inherits(obj <- try(pop(db), silent = TRUE),
-                               "try-error")) {
-                        Sys.sleep(0.1)
-                }
-                if(is.null(obj))
-                        break
-                result <- FUN(obj)
+                empty <- try(isEmpty(db), silent = TRUE)
 
-                while(inherits(try(push(rdb, result), silent = TRUE),
-                               "try-error")) {
-                        Sys.sleep(0.1)
+                if(inherits(empty, "try-error"))
+                        next
+                if(empty)
+                        return(invisible(NULL))
+                if(!inherits(obj <- try(pop(db), silent = TRUE), "try-error")) {
+                        result <- FUN(obj)
+
+                        while(inherits(try(push(rdb, result), silent = TRUE),
+                                       "try-error")) {
+                                Sys.sleep(0.1)
+                        }
                 }
+                else
+                        Sys.sleep(0.1)
         }
         invisible(NULL)
 }
