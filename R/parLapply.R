@@ -16,15 +16,18 @@ plapply <- function(X, FUN, name = NULL) {
         setFUN(p$db, FUN)
 
         ## Send the data out
-        mpushS(p$db, X)
+        mpush(p$db, X)
 
         worker(name)
 
         ## Wait for other workers to finish
-        while(!isEmptyS(p$db))
+        while(!isEmpty(p$db))
                 Sys.sleep(0.5)
         getResults(name)
 }
+
+## This is a hack; we need to find a way to do this so that it doesn't
+## expose gory details
 
 getResults <- function(name) {
         db <- dbInit(paste(name, "result", sep = "."))
@@ -36,16 +39,16 @@ getResults <- function(name) {
 }
 
 setFUN <- function(db, FUN) {
-        dbInsert(db$stack, "FUN", FUN)
+        dbInsert(db@stack, "FUN", FUN)
 }
 
 getFUN <- function(db) {
-        dbFetch(db$stack, "FUN")
+        dbFetch(db@stack, "FUN")
 }
 
 ################################################################################
 
-pollWorker <- function(name) {
+spinWorker <- function(name) {
         repeat {
                 try(worker(name), silent = TRUE)
                 Sys.sleep(0.5)
@@ -54,14 +57,14 @@ pollWorker <- function(name) {
 
 worker <- function(name) {
         db <- initS(name)
-        rdbname <- paste(db$name, "result", sep = ".")
+        rdbname <- paste(db@name, "result", sep = ".")
         rdb <- initS(rdbname)
         FUN <- getFUN(db)
 
-        if(isEmptyS(db))
+        if(isEmpty(db))
                 return(invisible(NULL))
         repeat {
-                while(inherits(obj <- try(popS(db), silent = TRUE),
+                while(inherits(obj <- try(pop(db), silent = TRUE),
                                "try-error")) {
                         Sys.sleep(0.1)
                 }
@@ -69,7 +72,7 @@ worker <- function(name) {
                         break
                 result <- FUN(obj)
 
-                while(inherits(try(pushS(rdb, result), silent = TRUE),
+                while(inherits(try(push(rdb, result), silent = TRUE),
                                "try-error")) {
                         Sys.sleep(0.1)
                 }
