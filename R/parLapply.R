@@ -1,51 +1,104 @@
 library(filehash)
 
-pStack <- function(name) {
-        ## A stack for the results
-        rdbname <- paste(name, "result", sep = ".")
-        list(db = createS(name),
-             rdb = createS(rdbname))
+
+makeCluster <- function(name) {
+        list(injob = createQ(sprintf("%s.in.q", name)),
+             outjob = createQ(sprintf("%s.out.q", name)),
+             name = name)
 }
 
-plapply <- function(X, FUN, name = NULL) {
-        ## Make "shared memory" stack
-        if(is.null(name))
-                name <- filehash:::sha1(X)
-        p <- pStack(name)
-        ## Share the function via "shared memory"
-        setFUN(p$db, FUN)
+joinCluster <- function(name) {
+        list(injob = initQ(sprintf("%s.in.q", name)),
+             outjob = initQ(sprintf("%s.out.q", name)),
+             name = name)
+}        
 
-        ## Send the data out
-        message("pushing data")
-        mpush(p$db, X)
-
-        message("starting worker")
-        worker(name)
-
-        ## Wait for other workers to finish
-        while(!isEmpty(p$db))
-                Sys.sleep(0.5)
-        getResults(name)
+pushjob <- function(obj, cl) {
+        while(TRUE) {
+                r <- tryCatch({
+                        push(cl$injob, obj)
+                }, error = function(e) {
+                        e
+                })
+                if(!inherits(r, "condition"))
+                        return(invisible())
+                else
+                        Sys.sleep(0.2)
+        }
 }
 
-## This is a hack; we need to find a way to do this so that it doesn't
-## expose gory details
-
-getResults <- function(name) {
-        db <- dbInit(paste(name, "result", sep = "."))
-        keys <- dbList(db)
-        keys <- keys[keys != "top"]
-        obj <- dbMultiFetch(db, keys)
-        obj <- lapply(obj, "[[", "value")
-        unname(obj)
+addJobs <- function(X, FUN, cl) {
+        lapply(X, function(data) {
+                obj <- list(data = data, f = FUN)
+                pushjob(obj, cl)
+        })
+        invisible()
 }
 
-setFUN <- function(db, FUN) {
-        dbInsert(db@stack, "FUN", FUN)
+popjob <- function(cl) {
+        while(TRUE) {
+              job <- tryCatch({
+                      pop(cl$injob)
+              }, error = function(e) {
+                      e
+              })
+              if(!inherits(job, "condition"))
+                      return(job)
+              else
+                      Sys.sleep(0.2)
+      }
 }
 
-getFUN <- function(db) {
-        dbFetch(db@stack, "FUN")
+runNextJob <- function(cl) {
+        job <- popjob(cl)
+        with(job, f(data))
+}
+
+runJobs <- function(cl) {
+        while(TRUE) {
+                out <- runNextJob(cl)
+                finishJob(out, cl)
+        }
+}
+
+finishJob <- function(out, cl) {
+        while(TRUE) {
+                r <- tryCatch({
+                        push(cl$outjob, out)
+                }, error = function(e) {
+                        e
+                })
+                if(!inherits(r, "condition"))
+                        return(invisible())
+                else
+                        Sys.sleep(0.2)
+        }
+}
+
+getout <- function(cl) {
+        results <- list()
+        
+        while(TRUE) {
+                out <- tryCatch({
+                        pop(cl$outjob)
+                }, error = function(e) {
+                        cm <- conditionMessage(e)
+
+                        if(cm == "cannot create lock file")
+                                e
+                        else if(cm == "queue is empty")
+                                NULL
+                        else
+                                e
+                })
+                if(is.null(out))
+                        break
+                else if(inherits(out, "condition"))
+                        Sys.sleep(0.2)
+                else
+                        results <- c(results, out)
+        }
+        results
 }
 
 ################################################################################
