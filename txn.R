@@ -1,4 +1,0 @@
-## Test transactions
-
-library(thor)
-
