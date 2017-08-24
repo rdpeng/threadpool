@@ -24,10 +24,16 @@ new_task <- function(data, func) {
                   class = "task")
 }
 
+#' @importFrom queue enqueue
+#' @export
+#'
 cluster_add1 <- function(cl, task) {
         enqueue(cl$injob, task)
 }
 
+#' @importFrom queue dequeue
+#' @export
+#'
 cluster_next_task <- function(cl) {
         task <- dequeue(cl$injob)
         task
@@ -41,6 +47,10 @@ task_run <- function(task) {
 task_output <- function(result) {
         result$output
 }
+
+#' @importFrom queue enqueue
+#' @export
+#'
 
 cluster_finish_task <- function(cl, out) {
         enqueue(cl$outjob, out)
