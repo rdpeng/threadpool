@@ -1,6 +1,7 @@
 ## Test cluster
 
-library(queue)
+library(rwmodel)
 
 clname <- tempfile()
-cl <- makeCluster(clname)
+cl <- cluster_make(clname)
+str(cl)

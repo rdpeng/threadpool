@@ -1,61 +1,51 @@
-library(queue)
 
-
-makeCluster <- function(name) {
-        list(injob = create_Q(sprintf("%s.in.q", name)),
-             outjob = create_Q(sprintf("%s.out.q", name)),
-             name = name)
+#' @importFrom queue create_Q
+#' @export
+#'
+cluster_make <- function(path) {
+        cl <- list(injob = create_Q(sprintf("%s.in.q", path)),
+                   outjob = create_Q(sprintf("%s.out.q", path)),
+                   path = path)
+        cl
 }
 
-joinCluster <- function(name) {
-        list(injob = init_Q(sprintf("%s.in.q", name)),
-             outjob = init_Q(sprintf("%s.out.q", name)),
-             name = name)
-}        
-
-job_add1 <- function(obj, cl) {
-        enqueue(cl$injob, obj)
+#' @importFrom queue init_Q
+#' @export
+#'
+cluster_join <- function(path) {
+        cl <- list(injob = init_Q(sprintf("%s.in.q", path)),
+                   outjob = init_Q(sprintf("%s.out.q", path)),
+                   path = path)
+        cl
 }
 
-addJobs <- function(X, FUN, cl) {
-        lapply(X, function(data) {
-                obj <- list(data = data, f = FUN)
-                job_add1(obj, cl)
-        })
-        invisible()
+new_task <- function(data, func) {
+        structure(list(data = data, func = func),
+                  class = "task")
 }
 
-job_remove <- function(cl) {
-        dequeue(cl$injob)
+cluster_add1 <- function(cl, task) {
+        enqueue(cl$injob, task)
 }
 
-job_run_next <- function(cl) {
-        job <- job_remove(cl)
-        with(job, f(data))
+cluster_next_task <- function(cl) {
+        task <- dequeue(cl$injob)
+        task
 }
 
-runJobs <- function(cl) {
-        while(TRUE) {
-                out <- job_run_next(cl)
-                job_finish(out, cl)
-        }
+task_run <- function(task) {
+        result <- with(task, func(data))
+        result
 }
 
-job_finish <- function(out, cl) {
+task_output <- function(result) {
+        result$output
+}
+
+cluster_finish_task <- function(cl, out) {
         enqueue(cl$outjob, out)
 }
 
-getout <- function(cl) {
-        results <- list()
-        
-        while(TRUE) {
-                out <- dequeue(cl$outjob)
-                if(is.null(out))
-                        break
-                results <- c(results, out)
-        }
-        results
-}
 
 ################################################################################
 
