@@ -2,7 +2,7 @@
 #' @importFrom queue create_Q
 #' @export
 #'
-cluster_make <- function(path) {
+cluster_create <- function(path) {
         cl <- list(injob = create_Q(sprintf("%s.in.q", path)),
                    path = path)
         cl
@@ -26,7 +26,7 @@ new_task <- function(data, func) {
 #' @importFrom queue enqueue
 #' @export
 #'
-cluster_add1 <- function(cl, task) {
+cluster_add1_task <- function(cl, task) {
         enqueue(cl$injob, task)
 }
 

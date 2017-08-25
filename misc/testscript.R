@@ -4,7 +4,7 @@ library(rwmodel)
 
 setwd("~/tmp")
 clname <- "cluster1"
-cl <- cluster_make(clname)
+cl <- cluster_create(clname)
 str(cl)
 
 ## Generate some tasks
@@ -36,7 +36,7 @@ process <- function(filename) {
 
 out <- lapply(taskfiles, function(filename) {
         message(filename)
-        cluster_add1(cl, new_task(filename, process))
+        cluster_add1_task(cl, new_task(filename, process))
 })
 
 
