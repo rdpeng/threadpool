@@ -19,9 +19,10 @@ cluster_join <- function(path) {
         cl
 }
 
+#' @export
+#'
 new_task <- function(data, func) {
-        structure(list(data = data, func = func),
-                  class = "task")
+        list(data = data, func = func)
 }
 
 #' @importFrom queue enqueue
@@ -32,11 +33,22 @@ cluster_add1 <- function(cl, task) {
 }
 
 #' @importFrom queue dequeue
-#' @export
 #'
 cluster_next_task <- function(cl) {
         task <- dequeue(cl$injob)
         task
+}
+
+
+#' @export
+#' @importFrom queue is_empty
+#'
+cluster_run <- function(cl) {
+        while(!is_empty(cl$injob)) {
+                task <- cluster_next_task(cl)
+                task_run(task)
+        }
+        invisible(NULL)
 }
 
 task_run <- function(task) {
