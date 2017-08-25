@@ -4,7 +4,6 @@
 #'
 cluster_make <- function(path) {
         cl <- list(injob = create_Q(sprintf("%s.in.q", path)),
-                   outjob = create_Q(sprintf("%s.out.q", path)),
                    path = path)
         cl
 }
@@ -14,7 +13,6 @@ cluster_make <- function(path) {
 #'
 cluster_join <- function(path) {
         cl <- list(injob = init_Q(sprintf("%s.in.q", path)),
-                   outjob = init_Q(sprintf("%s.out.q", path)),
                    path = path)
         cl
 }
