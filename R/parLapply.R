@@ -69,39 +69,3 @@ cluster_finish_task <- function(cl, out) {
 }
 
 
-################################################################################
-
-spinWorker <- function(name) {
-        repeat {
-                try(worker(name), silent = TRUE)
-                Sys.sleep(0.5)
-        }
-}
-
-worker <- function(name) {
-        db <- initS(name)
-        rdbname <- paste(db@name, "result", sep = ".")
-        rdb <- initS(rdbname)
-        FUN <- getFUN(db)
-
-        repeat {
-                empty <- try(isEmpty(db), silent = TRUE)
-
-                if(inherits(empty, "try-error"))
-                        next
-                if(empty)
-                        return(invisible(NULL))
-                if(!inherits(obj <- try(pop(db), silent = TRUE), "try-error")) {
-                        result <- FUN(obj)
-
-                        while(inherits(try(push(rdb, result), silent = TRUE),
-                                       "try-error")) {
-                                Sys.sleep(0.1)
-                        }
-                }
-                else
-                        Sys.sleep(0.1)
-        }
-        invisible(NULL)
-}
-
