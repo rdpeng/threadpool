@@ -1,4 +1,4 @@
-Package: rwmodel
+Package: threadpool
 Type: Package
 Title: Parallel Processing with a Replicated Worker Model
 Imports: queue
