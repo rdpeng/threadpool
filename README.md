@@ -3,7 +3,7 @@
 threadpool
 ==========
 
-The goal of threadpool is to ...
+The `threadpool` package implements a simple parallel programming backend using a thread pool model that can potentially be dynamically resized during operation.
 
 Installation
 ------------
@@ -11,8 +11,8 @@ Installation
 You can install threadpool from github with:
 
 ``` r
-# install.packages("devtools")
-devtools::install_github("rdpeng/threadpool")
+# install.packages("remotes")
+remotes::install_github("rdpeng/threadpool")
 ```
 
 Example
