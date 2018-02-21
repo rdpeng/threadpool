@@ -1,18 +1,20 @@
 
-#' @importFrom queue create_Q
+#' @importFrom queue create_queue
 #' @export
 #'
 cluster_create <- function(path) {
-        cl <- list(injob = create_Q(sprintf("%s.in.q", path)),
+        cl <- list(injob = create_queue(sprintf("%s.in.q", path)),
+                   outjob = create_queue(sprintf("%s.out.q", path)),
                    path = path)
         cl
 }
 
-#' @importFrom queue init_Q
+#' @importFrom queue init_queue
 #' @export
 #'
 cluster_join <- function(path) {
-        cl <- list(injob = init_Q(sprintf("%s.in.q", path)),
+        cl <- list(injob = init_queue(sprintf("%s.in.q", path)),
+                   outjob = create_queue(sprintf("%s.out.q", path)),
                    path = path)
         cl
 }
