@@ -12,6 +12,8 @@ tp_map(x, f, meta = NULL, cl_name = NULL, ncores = 2L,
 
 \item{f}{a function}
 
+\item{meta}{arbitrary metadata for the applying the function \code{f}}
+
 \item{cl_name}{an option name for the cluster queue}
 
 \item{ncores}{the number of cores to use}
