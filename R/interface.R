@@ -32,7 +32,7 @@ tp_map <- function(x, f, meta = NULL, cl_name = NULL, ncores = 2L,
                 rvalue <- mccollect(presult)
         else
                 rvalue <- presult
-        rvalue
+        invisible(rvalue)
 }
 
 
