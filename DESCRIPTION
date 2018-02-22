@@ -2,6 +2,7 @@ Package: threadpool
 Type: Package
 Title: Parallel Processing with a Thread Pool
 Imports: queue
+Suggests: testthat
 Version: 0.1
 Author: Roger D. Peng <rdpeng@gmail.com>
 Maintainer: Roger D. Peng <rdpeng@gmail.com>
