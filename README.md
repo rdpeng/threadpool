@@ -5,6 +5,10 @@ threadpool
 
 The `threadpool` package implements a simple parallel programming backend using a thread pool model that can potentially be dynamically resized during operation.
 
+A few benefits of this model of parallel computing are
+
+-   *Dynamic resources allocation*
+
 Installation
 ------------
 
