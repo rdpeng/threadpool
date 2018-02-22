@@ -24,7 +24,7 @@ A few benefits of this model of parallel computing are
 
 * *Fault tolerance and restartability*: Tasks can continue executing as nodes come in and out of the cluster. In particular, if the entire cluster goes down, the job can be automatically restarted where it left off.
 
-* *Seeamless switching to parallel mode*: It's easy to start and debug a job in single processor mode and then ramp up to parallel computing without needing to start the job over again.
+* *Seamless switching to parallel mode*: It's easy to start and debug a job in single processor mode and then ramp up to parallel computing without needing to start the job over again.
 
 ## Installation
 
