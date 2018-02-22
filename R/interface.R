@@ -7,6 +7,7 @@
 #'
 #' @param x an R object that will be coerced to a list
 #' @param f a function
+#' @param meta arbitrary metadata for the applying the function \code{f}
 #' @param cl_name an option name for the cluster queue
 #' @param ncores the number of cores to use
 #' @param wait_for_result should we wait for all results to finish? (default = TRUE)
