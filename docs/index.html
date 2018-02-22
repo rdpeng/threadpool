@@ -61,23 +61,40 @@
 <div id="threadpool" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#threadpool" class="anchor"></a>threadpool</h1></div>
-<p>The <code>threadpool</code> package implements a simple parallel programming backend using a thread pool model that can potentially be dynamically resized during operation.</p>
+<p>The <code>threadpool</code> package implements a simple parallel programming backend using a thread pool model that can be dynamically resized during operation.</p>
 <p>A few benefits of this model of parallel computing are</p>
 <ul>
-<li><em>Dynamic resources allocation</em></li>
+<li><p><em>Dynamic resource allocation</em>: You can modify the number of resources dedicated to a job as the job is running and as resources become available or unavailable.</p></li>
+<li><p><em>Automatic load balancing</em>: Tasks are not prescheduled to specific nodes of the cluster and so long-running jobs do not prevent faster-running jobs from executing.</p></li>
+<li><p><em>Fault tolerance and restartability</em>: Tasks can continue executing as nodes come in and out of the cluster. In particular, if the entire cluster goes down, the job can be automatically restarted where it left off.</p></li>
+<li><p><em>Seeamless switching to parallel mode</em>: It’s easy to start and debug a job in single processor mode and then ramp up to parallel computing without needing to start the job over again.</p></li>
 </ul>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
-<p>You can install threadpool from github with:</p>
+<p>You can install threadpool from GitHub with:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># install.packages("remotes")</span>
 remotes<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/remotes/topics/install_github">install_github</a></span>(<span class="st">"rdpeng/threadpool"</span>)</code></pre></div>
+<p>The <code>threadpool</code> package makes use of the <code>thor</code> package by Rich FitzJohn. This package can be installed from GitHub with:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">remotes<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/remotes/topics/install_github">install_github</a></span>(<span class="st">"richfitz/thor"</span>)</code></pre></div>
+<p>In addition, you need to install the <code>queue</code> package from GitHub with:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">remotes<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/remotes/topics/install_github">install_github</a></span>(<span class="st">"rdpeng/queue"</span>)</code></pre></div>
 </div>
 <div id="example" class="section level2">
 <h2 class="hasAnchor">
 <a href="#example" class="anchor"></a>Example</h2>
-<p>This is a basic example which shows you how to solve a common problem:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## basic example code</code></pre></div>
+<p>This is a basic example of how you might invoke the <code>threadpool</code> package. The primary user-facing function is <code><a href="reference/tp_map.html">tp_map()</a></code>, which is can be thought of as a parallel version of <code>Map()</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(threadpool)
+<span class="kw">library</span>(queue)
+
+<span class="kw">data</span>(airquality)
+clname &lt;-<span class="st"> </span><span class="kw"><a href="reference/tp_map.html">tp_map</a></span>(airquality, <span class="cf">function</span>(x, meta) {
+        <span class="kw">list</span>(<span class="dt">output =</span> <span class="kw">mean</span>(x, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>))
+})
+
+cl &lt;-<span class="st"> </span><span class="kw"><a href="reference/cluster_join.html">cluster_join</a></span>(clname)
+<span class="kw"><a href="http://www.rdocumentation.org/packages/queue/topics/peek">peek</a></span>(cl<span class="op">$</span>outjob)
+<span class="co">#&gt; [1] 42.12931</span></code></pre></div>
 </div>
 </div>
 </div>
