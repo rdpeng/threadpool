@@ -1,49 +1,88 @@
 
-cluster_paths <- function(path) {
-        list(injob = sprintf("%s.in.q", path),
-             outjob = sprintf("%s.out.q", path),
-             meta = sprintf("%s.meta.rds", path))
+cluster_paths <- function(name) {
+        list(injob = sprintf("%s.in.q", name),
+             outjob = sprintf("%s.out.q", name),
+             meta = sprintf("%s.meta.rds", name))
 }
 
+#' Delete a Cluster
+#'
+#' Clean up cluster-related files from the filesystem
+#'
+#' @param name cluster name
 #' @export
 #'
-delete_cluster <- function(path) {
-        p <- cluster_paths(path)
+delete_cluster <- function(name) {
+        p <- cluster_paths(name)
+        cat("removing input queue...")
         unlink(p$injob, recursive = TRUE)
+        cat("done!\n")
+        cat("removing output queue...")
         unlink(p$outjob, recursive = TRUE)
-        file.remove(p$meta)
+        cat("done!\n")
+        cat("removing metadata...")
+        if(file.remove(p$meta))
+                cat("done!\n")
+        else {
+                cat("\n")
+                warning("problem removing metadata")
+        }
+        invisible()
 }
 
+#' Create a Cluster
+#'
+#' Create the input job queue, the output job queue, and the metadata path
+#' for a cluster
+#'
+#' @param name the name of the cluster
+#'
 #' @importFrom queue create_queue
 #' @export
 #'
-cluster_create <- function(path) {
-        p <- cluster_paths(path)
+cluster_create <- function(name) {
+        p <- cluster_paths(name)
         cl <- list(injob = create_queue(p$injob),
                      outjob = create_queue(p$outjob),
                      meta = p$meta,
-                     path = path)
+                     name = name)
         cl
 }
 
+#' Join a Cluster
+#'
+#' Join a currently running cluster in order to execute jobs
+#'
+#' @param name name of the cluster
+#'
+#' @description Given a cluster name, join that cluster and return a cluster
+#' object for subsequent passing to \code{cluster_run}.
+#'
+#' @return A cluster object is returned.
+#'
 #' @importFrom queue init_queue
 #' @export
 #'
-cluster_join <- function(path) {
-        p <- cluster_paths(path)
+cluster_join <- function(name) {
+        p <- cluster_paths(name)
         cl <- list(injob = init_queue(p$injob),
                    outjob = init_queue(p$outjob),
                    meta = p$meta,
-                   path = path)
+                   name = name)
         cl
 }
 
-#' @export
-#'
 new_task <- function(data, func) {
         list(data = data, func = func)
 }
 
+#' Add One Task to a Cluster
+#'
+#' Add a task to the input queue of a cluster
+#'
+#' @param cl a cluster object
+#' @param task a task object
+#'
 #' @importFrom queue enqueue
 #' @export
 #'
@@ -52,6 +91,13 @@ cluster_add1_task <- function(cl, task) {
         enqueue(injob_q, task)
 }
 
+#' Retrieve the Next Task
+#'
+#' Retrieve the next task in the input queue for a cluster
+#'
+#' @param cl a cluster object
+#'
+#' @return a task object
 #' @importFrom queue dequeue
 #' @export
 #'
@@ -62,8 +108,18 @@ cluster_next_task <- function(cl) {
 }
 
 
+#' Run Tasks in a Cluster
+#'
+#' Begin running tasks from a cluster queue
+#'
+#' @param cl cluster object
+#'
+#' @description This function takes information about a cluster and begins
+#' reading and executing tasks from the associated input queue.
+#'
+#' @return Nothing is returned.
+#'
 #' @export
-#' @importFrom queue is_empty
 #'
 cluster_run <- function(cl) {
         meta <- readRDS(cl$meta)
@@ -86,6 +142,13 @@ task_output <- function(result) {
         result$output
 }
 
+#' Finish a Cluster Task
+#'
+#' Take the output from running a task and add it to the output queue
+#'
+#' @param cl a cluster object
+#' @param out the output from a task
+#'
 #' @importFrom queue enqueue
 #' @export
 #'

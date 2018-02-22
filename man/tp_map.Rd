@@ -10,15 +10,15 @@ tp_map(x, f, meta = NULL, cl_name = NULL, ncores = 2L,
 \arguments{
 \item{x}{an R object that will be coerced to a list}
 
-\item{f}{a function}
+\item{f}{a function to be mapped to the elements of \code{x}}
 
 \item{meta}{arbitrary metadata for the applying the function \code{f}}
 
-\item{cl_name}{an option name for the cluster queue}
+\item{cl_name}{an optional name for the cluster queue}
 
 \item{ncores}{the number of cores to use}
 
-\item{wait_for_result}{should we wait for all results to finish? (default = TRUE)}
+\item{wait_for_result}{should we wait for all results to finish?}
 }
 \description{
 Map a function in parallal across the elements of a list

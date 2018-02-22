@@ -6,11 +6,11 @@
 #' Map a function in parallal across the elements of a list
 #'
 #' @param x an R object that will be coerced to a list
-#' @param f a function
+#' @param f a function to be mapped to the elements of \code{x}
 #' @param meta arbitrary metadata for the applying the function \code{f}
-#' @param cl_name an option name for the cluster queue
+#' @param cl_name an optional name for the cluster queue
 #' @param ncores the number of cores to use
-#' @param wait_for_result should we wait for all results to finish? (default = TRUE)
+#' @param wait_for_result should we wait for all results to finish?
 #' @importFrom parallel mcparallel mccollect
 #' @export
 #'
@@ -37,6 +37,16 @@ tp_map <- function(x, f, meta = NULL, cl_name = NULL, ncores = 2L,
 
 
 
+#' Initialize Cluster Input Queue
+#'
+#' Intialize the cluster input queue by adding all of the jobs based on the
+#' input data
+#'
+#' @param cl_name cluster name
+#' @param x the data
+#' @param f a function to map to the data
+#' @param meta arbitrary metadata for the applying the function \code{f}
+#'
 #' @export
 #'
 initialize_cluster_queue <- function(cl_name, x, f, meta) {
