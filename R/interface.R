@@ -11,16 +11,18 @@
 #' @param cl_name an optional name for the cluster queue
 #' @param ncores the number of cores to use
 #' @param wait_for_result should we wait for all results to finish?
+#' @param mapsize \code{mapsize} argument for underlying LMDB database
+#'
 #' @importFrom parallel mcparallel mccollect
 #' @export
 #'
 tp_map <- function(x, f, meta = NULL, cl_name = NULL, ncores = 2L,
-                   wait_for_result = TRUE) {
+                   wait_for_result = TRUE, mapsize = NULL) {
         f <- match.fun(f)
         x <- as.list(x)
         if(is.null(cl_name))
                 cl_name <- tempfile("cluster")
-        initialize_cluster_queue(cl_name, x, f, meta)
+        initialize_cluster_queue(cl_name, x, f, meta, mapsize)
         presult <- vector("list", length = ncores)
         for(i in seq_len(ncores)) {
                 presult[[i]] <- mcparallel({
@@ -46,11 +48,14 @@ tp_map <- function(x, f, meta = NULL, cl_name = NULL, ncores = 2L,
 #' @param x the data
 #' @param f a function to map to the data
 #' @param meta arbitrary metadata for the applying the function \code{f}
-#'
+#' @param mapsize \code{mapsize} argument for underlying LMDB database
+
 #' @export
 #'
-initialize_cluster_queue <- function(cl_name, x, f, meta) {
-        cl <- cluster_create(cl_name)
+initialize_cluster_queue <- function(cl_name, x, f, meta, mapsize) {
+        if(is.null(mapsize))
+                mapsize <- getOption("threadpool_default_mapsize")
+        cl <- cluster_create(cl_name, mapsize)
         for(i in seq_along(x)) {
                 task <- new_task(x[[i]], f)
                 cluster_add1_task(cl, task)

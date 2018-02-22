@@ -36,14 +36,15 @@ delete_cluster <- function(name) {
 #' for a cluster
 #'
 #' @param name the name of the cluster
+#' @param mapsize \code{mapsize} argument for underlying LMDB database
 #'
 #' @importFrom queue create_queue
 #' @export
 #'
-cluster_create <- function(name) {
+cluster_create <- function(name, mapsize = getOption("threadpool_default_mapsize")) {
         p <- cluster_paths(name)
-        cl <- list(injob = create_queue(p$injob),
-                     outjob = create_queue(p$outjob),
+        cl <- list(injob = create_queue(p$injob, mapsize = mapsize),
+                     outjob = create_queue(p$outjob, mapsize = mapsize),
                      meta = p$meta,
                      name = name)
         cl
@@ -54,6 +55,7 @@ cluster_create <- function(name) {
 #' Join a currently running cluster in order to execute jobs
 #'
 #' @param name name of the cluster
+#' @param mapsize \code{mapsize} argument for underlying LMDB database
 #'
 #' @description Given a cluster name, join that cluster and return a cluster
 #' object for subsequent passing to \code{cluster_run}.
@@ -63,10 +65,10 @@ cluster_create <- function(name) {
 #' @importFrom queue init_queue
 #' @export
 #'
-cluster_join <- function(name) {
+cluster_join <- function(name, mapsize = getOption("threadpool_default_mapsize")) {
         p <- cluster_paths(name)
-        cl <- list(injob = init_queue(p$injob),
-                   outjob = init_queue(p$outjob),
+        cl <- list(injob = init_queue(p$injob, mapsize = mapsize),
+                   outjob = init_queue(p$outjob, mapsize = mapsize),
                    meta = p$meta,
                    name = name)
         cl

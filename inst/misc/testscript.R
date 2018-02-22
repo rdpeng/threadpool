@@ -2,9 +2,6 @@
 
 library(threadpool)
 
-
-
-
 setwd("~/tmp")
 
 cl_name <- "cluster1"
@@ -16,16 +13,16 @@ x <- as.list(x)
 f <- function(num, meta) {
         pid <- Sys.getpid()
         nr <- nrow(meta)
-        message(pid, " is running task ", num, ": metadata has ", nr, " rows")
+        message("PID ", pid, " is running task ", num, ": metadata has ", nr, " rows")
         Sys.sleep(1)
         list(output = paste0(pid, " is finished running ", num, "!"))
 }
 meta <- airquality
 
 ## Start up cluster
-initialize_cluster_queue(cl_name, x, f, meta = airquality)
+initialize_cluster_queue(cl_name, x, f, meta = airquality, NULL)
 
-cl <- cluster_join(cl_name)
+cl <- cluster_join(cl_name, 2^30)
 cluster_run(cl)
 
 
@@ -40,6 +37,7 @@ delete_cluster(cl_name)
 ## Use tp_map() function
 
 setwd("~/tmp")
+dir()
 
 ## Generate some tasks
 n <- 500
