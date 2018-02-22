@@ -61,13 +61,19 @@
 <div id="threadpool" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#threadpool" class="anchor"></a>threadpool</h1></div>
-<p>The <code>threadpool</code> package implements a simple parallel programming backend using a thread pool model that can be dynamically resized during operation.</p>
+<p>The <code>threadpool</code> package implements a simple parallel programming backend using a thread pool model that can be dynamically resized during operation. The package builds clusters by setting up a queue of input jobs and having the individual cluster nodes retrieve jobs from the queue one at a time. The queue is stored on-disk and nodes communicate with each other via the filesystem.</p>
 <p>A few benefits of this model of parallel computing are</p>
 <ul>
 <li><p><em>Dynamic resource allocation</em>: You can modify the number of resources dedicated to a job as the job is running and as resources become available or unavailable.</p></li>
 <li><p><em>Automatic load balancing</em>: Tasks are not prescheduled to specific nodes of the cluster and so long-running jobs do not prevent faster-running jobs from executing.</p></li>
 <li><p><em>Fault tolerance and restartability</em>: Tasks can continue executing as nodes come in and out of the cluster. In particular, if the entire cluster goes down, the job can be automatically restarted where it left off.</p></li>
 <li><p><em>Seamless switching to parallel mode</em>: It’s easy to start and debug a job in single processor mode and then ramp up to parallel computing without needing to start the job over again.</p></li>
+</ul>
+<p>This package will be most useful in situations where the jobs being run</p>
+<ul>
+<li><p>are embarassingly parallel, and so don’t require complex communication between nodes;</p></li>
+<li><p>are relatively long-running, on the order of hours or days;</p></li>
+<li><p>have individual tasks that are heterogeneous in their runtimes.</p></li>
 </ul>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
@@ -86,6 +92,8 @@ remotes<span class="op">::</span><span class="kw"><a href="http://www.rdocumenta
 <p>This is a basic example of how you might invoke the <code>threadpool</code> package. The primary user-facing function is <code><a href="reference/tp_map.html">tp_map()</a></code>, which is can be thought of as a parallel version of <code>Map()</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(threadpool)
 <span class="kw">library</span>(queue)
+
+## Use the `tp_map()` function
 
 <span class="kw">data</span>(airquality)
 clname &lt;-<span class="st"> </span><span class="kw"><a href="reference/tp_map.html">tp_map</a></span>(airquality, <span class="cf">function</span>(x, meta) {
