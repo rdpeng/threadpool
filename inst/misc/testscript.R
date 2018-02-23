@@ -27,9 +27,7 @@ cluster_run(cl)
 
 
 library(threadpool)
-cl <- cluster_join("cluster1")
-cluster_run(cl)
-
+cluster_add_nodes(cl_name, 3)
 
 delete_cluster(cl_name)
 

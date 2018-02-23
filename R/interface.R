@@ -32,12 +32,26 @@ tp_map <- function(x, f, meta = NULL, cl_name = NULL, ncores = 2L,
         }
         if(wait_for_result)
                 rvalue <- mccollect(presult)
-        else
-                rvalue <- presult
         cl_name
 }
 
-
+#' Add Nodes to a Cluster
+#'
+#' For an already-running cluster, add more nodes to execute tasks.
+#'
+#' @param name name of the cluster
+#' @param ncores the number of nodes to add
+#'
+#' @export
+cluster_add_nodes <- function(name, ncores = 1L) {
+        presults <- vector("list", length = ncores)
+        for(i in seq_len(ncores)) {
+                presults[[i]] <- mcparallel({
+                        cl <- cluster_join(name)
+                        cluster_run(cl)
+                })
+        }
+}
 
 #' Initialize Cluster Input Queue
 #'
