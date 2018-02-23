@@ -23,13 +23,8 @@ tp_map <- function(x, f, meta = NULL, cl_name = NULL, ncores = 2L,
         if(is.null(cl_name))
                 cl_name <- tempfile("cluster")
         initialize_cluster_queue(cl_name, x, f, meta, mapsize)
-        presult <- vector("list", length = ncores)
-        for(i in seq_len(ncores)) {
-                presult[[i]] <- mcparallel({
-                        cl <- cluster_join(cl_name)
-                        cluster_run(cl)
-                })
-        }
+        presult <- cluster_add_nodes(cl_name, ncores)
+
         if(wait_for_result)
                 rvalue <- mccollect(presult)
         cl_name
@@ -44,13 +39,14 @@ tp_map <- function(x, f, meta = NULL, cl_name = NULL, ncores = 2L,
 #'
 #' @export
 cluster_add_nodes <- function(name, ncores = 1L) {
-        presults <- vector("list", length = ncores)
+        presult <- vector("list", length = ncores)
         for(i in seq_len(ncores)) {
-                presults[[i]] <- mcparallel({
+                presult[[i]] <- mcparallel({
                         cl <- cluster_join(name)
                         cluster_run(cl)
                 })
         }
+        presult
 }
 
 #' Initialize Cluster Input Queue
