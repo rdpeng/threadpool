@@ -30,19 +30,21 @@ You can install threadpool from GitHub with:
 
 ``` r
 # install.packages("remotes")
-remotes::install_github("rdpeng/threadpool")
+library(remotes)
+install_github("rdpeng/threadpool")
 ```
 
 The `threadpool` package makes use of the `thor` package by Rich FitzJohn. This package can be installed from GitHub with:
 
 ``` r
-remotes::install_github("richfitz/thor")
+library(remotes)
+install_github("richfitz/thor")
 ```
 
 In addition, you need to install the `queue` package from GitHub with:
 
 ``` r
-remotes::install_github("rdpeng/queue")
+install_github("rdpeng/queue")
 ```
 
 Example
