@@ -10,7 +10,6 @@
 #' @param meta arbitrary metadata needed for applying the function \code{f}
 #' @param cl_name an optional name for the cluster queue
 #' @param ncores the number of cores to use
-#' @param wait_for_result should we wait for all results to finish?
 #' @param mapsize \code{mapsize} argument for underlying LMDB database
 #'
 #' @importFrom parallel mccollect

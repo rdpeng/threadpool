@@ -19,8 +19,6 @@ tp_map(x, f, meta = NULL, cl_name = NULL, ncores = 2L,
 \item{ncores}{the number of cores to use}
 
 \item{mapsize}{\code{mapsize} argument for underlying LMDB database}
-
-\item{wait_for_result}{should we wait for all results to finish?}
 }
 \description{
 Map a function in parallal across the elements of a list
