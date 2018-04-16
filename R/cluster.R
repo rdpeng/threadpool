@@ -1,8 +1,8 @@
 
 cluster_paths <- function(name) {
-        list(injob = file.path(name, sprintf("%s.in.q", name)),
-             outjob = file.path(name, sprintf("%s.out.q", name)),
-             meta = file.path(name, sprintf("%s.meta.rds", name)))
+        list(injob = file.path(name, sprintf("%s.in.q", basename(name))),
+             outjob = file.path(name, sprintf("%s.out.q", basename(name))),
+             meta = file.path(name, sprintf("%s.meta.rds", basename(name))))
 }
 
 #' Delete a Cluster
