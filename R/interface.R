@@ -23,7 +23,7 @@ tp_map <- function(x, f, meta = NULL, cl_name = NULL, ncores = 2L,
                 cl_name <- tempfile("cluster")
         initialize_cluster_queue(cl_name, x, f, meta, mapsize)
         presult <- cluster_add_nodes(cl_name, ncores)
-        invisible(cl_name)
+        list(cl = cl_name, nodes = presult)
 }
 
 #' Add Nodes to a Cluster
