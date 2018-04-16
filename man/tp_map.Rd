@@ -5,7 +5,7 @@
 \title{Thread Pool Map}
 \usage{
 tp_map(x, f, meta = NULL, cl_name = NULL, ncores = 2L,
-  wait_for_result = TRUE, mapsize = NULL)
+  mapsize = getOption("threadpool_default_mapsize"))
 }
 \arguments{
 \item{x}{an R object that will be coerced to a list}
@@ -18,9 +18,9 @@ tp_map(x, f, meta = NULL, cl_name = NULL, ncores = 2L,
 
 \item{ncores}{the number of cores to use}
 
-\item{wait_for_result}{should we wait for all results to finish?}
-
 \item{mapsize}{\code{mapsize} argument for underlying LMDB database}
+
+\item{wait_for_result}{should we wait for all results to finish?}
 }
 \description{
 Map a function in parallal across the elements of a list

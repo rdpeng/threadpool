@@ -7,27 +7,23 @@
 #'
 #' @param x an R object that will be coerced to a list
 #' @param f a function to be mapped to the elements of \code{x}
-#' @param meta arbitrary metadata for the applying the function \code{f}
+#' @param meta arbitrary metadata needed for applying the function \code{f}
 #' @param cl_name an optional name for the cluster queue
 #' @param ncores the number of cores to use
 #' @param wait_for_result should we wait for all results to finish?
 #' @param mapsize \code{mapsize} argument for underlying LMDB database
 #'
-#' @importFrom parallel mcparallel mccollect
 #' @export
 #'
 tp_map <- function(x, f, meta = NULL, cl_name = NULL, ncores = 2L,
-                   wait_for_result = TRUE, mapsize = NULL) {
+                   mapsize = getOption("threadpool_default_mapsize")) {
         f <- match.fun(f)
         x <- as.list(x)
         if(is.null(cl_name))
                 cl_name <- tempfile("cluster")
         initialize_cluster_queue(cl_name, x, f, meta, mapsize)
         presult <- cluster_add_nodes(cl_name, ncores)
-
-        if(wait_for_result)
-                rvalue <- mccollect(presult)
-        cl_name
+        invisible(cl_name)
 }
 
 #' Add Nodes to a Cluster
@@ -37,6 +33,7 @@ tp_map <- function(x, f, meta = NULL, cl_name = NULL, ncores = 2L,
 #' @param name name of the cluster
 #' @param ncores the number of nodes to add
 #'
+#' @importFrom parallel mcparallel
 #' @export
 cluster_add_nodes <- function(name, ncores = 1L) {
         presult <- vector("list", length = ncores)
