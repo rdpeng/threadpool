@@ -14,3 +14,6 @@ cluster_add_nodes(name, ncores = 1L)
 \description{
 For an already-running cluster, add more nodes to execute tasks.
 }
+\note{
+Because of the use of \code{mcparallel}, whis may not work on Windows.
+}

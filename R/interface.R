@@ -35,6 +35,9 @@ tp_map <- function(x, f, meta = NULL, cl_name = NULL, ncores = 2L,
 #'
 #' @importFrom parallel mcparallel
 #' @export
+#'
+#' @note Because of the use of \code{mcparallel}, whis may not work on Windows.
+#'
 cluster_add_nodes <- function(name, ncores = 1L) {
         presult <- vector("list", length = ncores)
         for(i in seq_len(ncores)) {

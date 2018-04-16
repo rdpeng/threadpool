@@ -12,7 +12,7 @@ tp_map(x, f, meta = NULL, cl_name = NULL, ncores = 2L,
 
 \item{f}{a function to be mapped to the elements of \code{x}}
 
-\item{meta}{arbitrary metadata for the applying the function \code{f}}
+\item{meta}{arbitrary metadata needed for applying the function \code{f}}
 
 \item{cl_name}{an optional name for the cluster queue}
 
