@@ -137,12 +137,11 @@ cluster_run <- function(cl) {
 
 task_run <- function(task, meta) {
         result <- with(task, do.call(func, list(data, meta)))
-        ## result <- with(task, func(data, meta))
         result
 }
 
 task_output <- function(result) {
-        result$output
+        result
 }
 
 #' Finish a Cluster Task
