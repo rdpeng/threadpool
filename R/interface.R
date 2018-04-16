@@ -13,6 +13,7 @@
 #' @param wait_for_result should we wait for all results to finish?
 #' @param mapsize \code{mapsize} argument for underlying LMDB database
 #'
+#' @importFrom parallel mccollect
 #' @export
 #'
 tp_map <- function(x, f, meta = NULL, cl_name = NULL, ncores = 2L,
@@ -23,7 +24,8 @@ tp_map <- function(x, f, meta = NULL, cl_name = NULL, ncores = 2L,
                 cl_name <- tempfile("cluster")
         initialize_cluster_queue(cl_name, x, f, meta, mapsize)
         presult <- cluster_add_nodes(cl_name, ncores)
-        list(cl = cl_name, nodes = presult)
+        result <- mccollect(presult)
+        result
 }
 
 #' Add Nodes to a Cluster
