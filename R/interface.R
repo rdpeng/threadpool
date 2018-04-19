@@ -24,8 +24,7 @@ tp_map <- function(x, f, envir = parent.frame(), meta = NULL,
         if(is.null(cl_name))
                 cl_name <- tempfile("cluster")
         initialize_cluster_queue(cl_name, x, f, envir, meta, mapsize)
-        presult <- cluster_add_nodes(cl_name, ncores)
-        result <- mccollect(presult)
+        result <- cluster_add_nodes(cl_name, ncores)
         result
 }
 
