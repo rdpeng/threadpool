@@ -3,6 +3,7 @@
 library(threadpool)
 
 setwd("~/tmp")
+dir()
 
 cl_name <- "cluster1"
 
@@ -13,14 +14,16 @@ x <- as.list(x)
 f <- function(num, meta) {
         pid <- Sys.getpid()
         nr <- nrow(meta)
-        message("PID ", pid, " is running task ", num, ": metadata has ", nr, " rows")
+        cat("PID ", pid, " is running task ", num, ": metadata has ", nr,
+            " rows\n", file = "output.log", append = TRUE)
         Sys.sleep(1)
         list(output = paste0(pid, " is finished running ", num, "!"))
 }
 meta <- airquality
 
 ## Start up cluster
-initialize_cluster_queue(cl_name, x, f, meta = airquality, NULL)
+initialize_cluster_queue(cl_name, x, f, env = globalenv(),
+                         meta = airquality, mapsize = NULL)
 
 cl <- cluster_join(cl_name, 2^30)
 cluster_run(cl)
@@ -53,7 +56,7 @@ f <- function(num, meta) {
 meta <- airquality
 cl_name <- "cluster1"
 
-tp_map(x, f, meta, cl_name, ncores = 3)
+tp_map(x, f, meta = meta, cl_name = cl_name, ncores = 3)
 
 
 delete_cluster(cl_name)
@@ -69,5 +72,8 @@ for(i in seq_along(x)) {
         ## enqueue(cl$injob, task)
 }
 saveRDS(meta, cl$meta, compress = FALSE)
+
+
+########################################################
 
 
