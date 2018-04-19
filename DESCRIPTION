@@ -4,7 +4,7 @@ Title: Parallel Processing with a Thread Pool
 Imports: queue
 Suggests: testthat
 Version: 0.1
-Authors@R: person(given = "Roger", family = "Peng", middle = "D.", role = c("aut", "cre"), email = "rdpeng@gmail.com")
+Authors@R: person(given = "Roger", family = "Peng", role = c("aut", "cre"), email = "rdpeng@gmail.com")
 Description: A parallel programming backend for R using a thread pool model that can be dynamically resized.
 License: GPL-3
 Encoding: UTF-8
