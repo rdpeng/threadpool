@@ -2,7 +2,8 @@
 cluster_paths <- function(name) {
         list(injob = file.path(name, sprintf("%s.in.q", basename(name))),
              outjob = file.path(name, sprintf("%s.out.q", basename(name))),
-             meta = file.path(name, sprintf("%s.meta.rds", basename(name))))
+             meta = file.path(name, sprintf("%s.meta.rds", basename(name))),
+             env = file.path(name, sprintf("%s.env.rds", basename(name))))
 }
 
 #' Delete a Cluster
@@ -27,6 +28,9 @@ delete_cluster <- function(name) {
                 cat("\n")
                 warning("problem removing metadata")
         }
+        cat("removing environment...")
+        file.remove(p$env)
+        cat("done!\n")
         file.remove(name)
         invisible()
 }
@@ -47,6 +51,7 @@ cluster_create <- function(name, mapsize = getOption("threadpool_default_mapsize
         cl <- list(injob = create_queue(p$injob, mapsize = mapsize),
                      outjob = create_queue(p$outjob, mapsize = mapsize),
                      meta = p$meta,
+                     env = p$env,
                      name = name)
         cl
 }
@@ -71,6 +76,7 @@ cluster_join <- function(name, mapsize = getOption("threadpool_default_mapsize")
         cl <- list(injob = init_queue(p$injob, mapsize = mapsize),
                    outjob = init_queue(p$outjob, mapsize = mapsize),
                    meta = p$meta,
+                   env = p$env,
                    name = name)
         cl
 }
@@ -125,18 +131,18 @@ cluster_next_task <- function(cl) {
 #' @export
 #'
 cluster_run <- function(cl) {
+        envir <- list2env(readRDS(cl$env))
         meta <- readRDS(cl$meta)
-
         while(!inherits(task <- cluster_next_task(cl), "try-error")) {
-                result <- task_run(task, meta)
+                result <- task_run(task, envir, meta)
                 output <- task_output(result)
                 cluster_finish_task(cl, output)
         }
         invisible(NULL)
 }
 
-task_run <- function(task, meta) {
-        result <- with(task, do.call(func, list(data, meta)))
+task_run <- function(task, env, meta) {
+        result <- with(task, do.call(func, list(data, meta), envir = env))
         result
 }
 

@@ -7,6 +7,7 @@
 #'
 #' @param x an R object that will be coerced to a list
 #' @param f a function to be mapped to the elements of \code{x}
+#' @param envir an environment within which to evaluate the function \code{f}
 #' @param meta arbitrary metadata needed for applying the function \code{f}
 #' @param cl_name an optional name for the cluster queue
 #' @param ncores the number of cores to use
@@ -15,13 +16,14 @@
 #' @importFrom parallel mccollect
 #' @export
 #'
-tp_map <- function(x, f, meta = NULL, cl_name = NULL, ncores = 2L,
+tp_map <- function(x, f, envir = parent.frame(), meta = NULL,
+                   cl_name = NULL, ncores = 2L,
                    mapsize = getOption("threadpool_default_mapsize")) {
         f <- match.fun(f)
         x <- as.list(x)
         if(is.null(cl_name))
                 cl_name <- tempfile("cluster")
-        initialize_cluster_queue(cl_name, x, f, meta, mapsize)
+        initialize_cluster_queue(cl_name, x, f, envir, meta, mapsize)
         presult <- cluster_add_nodes(cl_name, ncores)
         result <- mccollect(presult)
         result
@@ -47,7 +49,8 @@ cluster_add_nodes <- function(name, ncores = 1L) {
                         cluster_run(cl)
                 })
         }
-        presult
+        result <- mccollect(presult)
+        result
 }
 
 #' Initialize Cluster Input Queue
@@ -58,12 +61,13 @@ cluster_add_nodes <- function(name, ncores = 1L) {
 #' @param cl_name cluster name
 #' @param x the data
 #' @param f a function to map to the data
+#' @param envir an environment within which to evaluate the function \code{f}
 #' @param meta arbitrary metadata for the applying the function \code{f}
 #' @param mapsize \code{mapsize} argument for underlying LMDB database
 
 #' @export
 #'
-initialize_cluster_queue <- function(cl_name, x, f, meta, mapsize) {
+initialize_cluster_queue <- function(cl_name, x, f, envir, meta, mapsize) {
         if(is.null(mapsize))
                 mapsize <- getOption("threadpool_default_mapsize")
         cl <- cluster_create(cl_name, mapsize)
@@ -72,5 +76,16 @@ initialize_cluster_queue <- function(cl_name, x, f, meta, mapsize) {
                 cluster_add1_task(cl, task)
         }
         saveRDS(meta, cl$meta, compress = FALSE)
+        exportEnv(cl, envir)
         invisible(NULL)
 }
+
+exportEnv <- function(cl, envir) {
+        objnames <- ls(envir, all.names = TRUE)
+        objlist <- mget(objnames, envir)
+        saveRDS(objlist, cl$env, compress = FALSE)
+}
+
+
+
+

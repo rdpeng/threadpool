@@ -4,13 +4,15 @@
 \alias{tp_map}
 \title{Thread Pool Map}
 \usage{
-tp_map(x, f, meta = NULL, cl_name = NULL, ncores = 2L,
-  mapsize = getOption("threadpool_default_mapsize"))
+tp_map(x, f, envir = parent.frame(), meta = NULL, cl_name = NULL,
+  ncores = 2L, mapsize = getOption("threadpool_default_mapsize"))
 }
 \arguments{
 \item{x}{an R object that will be coerced to a list}
 
 \item{f}{a function to be mapped to the elements of \code{x}}
+
+\item{envir}{an environment within which to evaluate the function \code{f}}
 
 \item{meta}{arbitrary metadata needed for applying the function \code{f}}
 
