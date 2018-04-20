@@ -13,16 +13,16 @@
 #' @param ncores the number of cores to use
 #' @param mapsize \code{mapsize} argument for underlying LMDB database
 #'
+#' @return a list containing the results
+#'
 #' @importFrom parallel mccollect
 #' @export
 #'
-tp_map <- function(x, f, envir = parent.frame(), meta = NULL,
-                   cl_name = NULL, ncores = 2L,
+tp_map <- function(x, f, cl_name, envir = parent.frame(), meta = list(),
+                   ncores = 2L,
                    mapsize = getOption("threadpool_default_mapsize")) {
         f <- match.fun(f)
         x <- as.list(x)
-        if(is.null(cl_name))
-                cl_name <- tempfile("cluster")
         initialize_cluster_queue(cl_name, x, f, envir, meta, mapsize)
         result <- cluster_add_nodes(cl_name, ncores)
         result
@@ -48,8 +48,7 @@ cluster_add_nodes <- function(name, ncores = 1L) {
                         cluster_run(cl)
                 })
         }
-        result <- mccollect(presult)
-        result
+        mccollect(presult)
 }
 
 #' Initialize Cluster Input Queue

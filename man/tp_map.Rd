@@ -4,23 +4,26 @@
 \alias{tp_map}
 \title{Thread Pool Map}
 \usage{
-tp_map(x, f, envir = parent.frame(), meta = NULL, cl_name = NULL,
-  ncores = 2L, mapsize = getOption("threadpool_default_mapsize"))
+tp_map(x, f, cl_name, envir = parent.frame(), meta = list(), ncores = 2L,
+  mapsize = getOption("threadpool_default_mapsize"))
 }
 \arguments{
 \item{x}{an R object that will be coerced to a list}
 
 \item{f}{a function to be mapped to the elements of \code{x}}
 
+\item{cl_name}{an optional name for the cluster queue}
+
 \item{envir}{an environment within which to evaluate the function \code{f}}
 
 \item{meta}{arbitrary metadata needed for applying the function \code{f}}
 
-\item{cl_name}{an optional name for the cluster queue}
-
 \item{ncores}{the number of cores to use}
 
 \item{mapsize}{\code{mapsize} argument for underlying LMDB database}
+}
+\value{
+a list containing the results
 }
 \description{
 Map a function in parallal across the elements of a list
