@@ -1,3 +1,34 @@
+########################################################
+## Use tp_map() function
+
+setwd("~/tmp")
+dir()
+
+## Generate some tasks
+n <- 500
+x <- seq_len(n)
+x <- as.list(x)
+f <- function(num, meta) {
+        pid <- Sys.getpid()
+        outfile <- sprintf("output_%d.txt", pid)
+        nr <- nrow(meta)
+        cat(pid, "is running task", num, ": metadata has", nr, "rows\n",
+            file = outfile, append = TRUE)
+        Sys.sleep(1)
+        list(output = paste0(pid, " is finished running ", num, "!"))
+}
+meta <- airquality
+cl_name <- "cluster1"
+
+tp_map(x, f, cl_name, meta = meta, ncores = 3)
+
+delete_cluster(cl_name)
+
+
+
+
+########################################################
+
 ## Test cluster
 
 library(threadpool)
@@ -34,32 +65,6 @@ cluster_add_nodes(cl_name, 3)
 
 delete_cluster(cl_name)
 
-########################################################
-## Use tp_map() function
-
-setwd("~/tmp")
-dir()
-
-## Generate some tasks
-n <- 500
-x <- seq_len(n)
-x <- as.list(x)
-f <- function(num, meta) {
-        pid <- Sys.getpid()
-        outfile <- sprintf("output_%d.txt", pid)
-        nr <- nrow(meta)
-        cat(pid, "is running task", num, ": metadata has", nr, "rows\n",
-            file = outfile, append = TRUE)
-        Sys.sleep(1)
-        list(output = paste0(pid, " is finished running ", num, "!"))
-}
-meta <- airquality
-cl_name <- "cluster1"
-
-tp_map(x, f, meta = meta, cl_name = cl_name, ncores = 3)
-
-
-delete_cluster(cl_name)
 
 
 ########################################################
