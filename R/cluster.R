@@ -14,25 +14,10 @@ cluster_paths <- function(name) {
 #' @export
 #'
 delete_cluster <- function(name) {
-        p <- cluster_paths(name)
-        cat("removing input queue...")
-        unlink(p$injob, recursive = TRUE)
-        cat("done!\n")
-        cat("removing output queue...")
-        unlink(p$outjob, recursive = TRUE)
-        cat("done!\n")
-        cat("removing metadata...")
-        if(file.remove(p$meta))
-                cat("done!\n")
-        else {
-                cat("\n")
-                warning("problem removing metadata")
-        }
-        cat("removing environment...")
-        file.remove(p$env)
-        cat("done!\n")
-        file.remove(name)
-        invisible()
+        val <- unlink(name, recursive = TRUE)
+        if(val > 0)
+                warning(sprintf("problem deleting cluster '%s'", name))
+        invisible(val)
 }
 
 #' Create a Cluster
