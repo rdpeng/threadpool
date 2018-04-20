@@ -73,9 +73,13 @@ initialize_cluster_queue <- function(cl_name, x, f, envir, meta, mapsize) {
                 task <- new_task(x[[i]], f)
                 cluster_add1_task(cl, task)
         }
-        saveRDS(meta, cl$meta, compress = FALSE)
+        exportMeta(cl, meta)
         exportEnv(cl, envir)
         invisible(NULL)
+}
+
+exportMeta <- function(cl, meta) {
+        saveRDS(meta, cl$meta, compress = FALSE)
 }
 
 exportEnv <- function(cl, envir) {
