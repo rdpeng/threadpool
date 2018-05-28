@@ -16,7 +16,6 @@
 #' @return a list containing the results
 #'
 #' @importFrom parallel mccollect
-#' @export
 #'
 tp_map <- function(x, f, cl_name, envir = parent.frame(), meta = list(),
                    ncores = 2L,
@@ -65,7 +64,8 @@ cluster_add_nodes <- function(name, ncores = 1L) {
 
 #' @export
 #'
-initialize_cluster_queue <- function(cl_name, x, f, envir, meta, mapsize) {
+initialize_cluster_queue <- function(cl_name, x, f, envir = parent.frame(),
+                                     meta = list(), mapsize = NULL) {
         if(is.null(mapsize))
                 mapsize <- getOption("threadpool_default_mapsize")
         cl <- cluster_create(cl_name, mapsize)
@@ -75,7 +75,7 @@ initialize_cluster_queue <- function(cl_name, x, f, envir, meta, mapsize) {
         }
         exportMeta(cl, meta)
         exportEnv(cl, envir)
-        invisible(NULL)
+        cl_name
 }
 
 exportMeta <- function(cl, meta) {

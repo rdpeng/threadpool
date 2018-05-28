@@ -127,7 +127,9 @@ cluster_run <- function(cl) {
 }
 
 task_run <- function(task, env, meta) {
-        result <- with(task, do.call(func, list(data, meta), envir = env))
+        result <- with(task, {
+                do.call(func, list(data, meta), envir = env)
+        })
         result
 }
 

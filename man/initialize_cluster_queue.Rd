@@ -4,7 +4,8 @@
 \alias{initialize_cluster_queue}
 \title{Initialize Cluster Input Queue}
 \usage{
-initialize_cluster_queue(cl_name, x, f, envir, meta, mapsize)
+initialize_cluster_queue(cl_name, x, f, envir = parent.frame(),
+  meta = list(), mapsize = NULL)
 }
 \arguments{
 \item{cl_name}{cluster name}
