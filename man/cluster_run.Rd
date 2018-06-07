@@ -4,10 +4,12 @@
 \alias{cluster_run}
 \title{Run Tasks in a Cluster}
 \usage{
-cluster_run(cl)
+cluster_run(cl, verbose = TRUE)
 }
 \arguments{
 \item{cl}{cluster object}
+
+\item{verbose}{print diagnostic messages?}
 }
 \value{
 Nothing is returned.

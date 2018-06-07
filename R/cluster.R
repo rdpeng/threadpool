@@ -73,8 +73,23 @@ cluster_join <- function(name) {
         cl
 }
 
-create_log_file <- function(name) {
-        sprintf("%s-%d.log", basename(name), Sys.getpid())
+create_log_file <- function(name, pid = Sys.getpid()) {
+        sprintf("%s-%d.log", basename(name), pid)
+}
+
+#' Show cluster node log file
+#'
+#' Show the output being sent to the cluster node log file
+#'
+#' @param name name of cluster
+#' @param pid process ID for cluster node
+#'
+#' @export
+
+show_log_file <- function(name, pid) {
+        path <- file.path(name, create_log_file(name, pid))
+        cmd <- sprintf("tail -f %s", path)
+        system(cmd)
 }
 
 new_task <- function(data, func) {
@@ -117,6 +132,7 @@ cluster_next_task <- function(cl) {
 #' Begin running tasks from a cluster queue
 #'
 #' @param cl cluster object
+#' @param verbose print diagnostic messages?
 #'
 #' @description This function takes information about a cluster and begins
 #' reading and executing tasks from the associated input queue.
@@ -125,8 +141,13 @@ cluster_next_task <- function(cl) {
 #'
 #' @export
 #'
-cluster_run <- function(cl) {
+cluster_run <- function(cl, verbose = TRUE) {
         envir <- list2env(readRDS(cl$env))
+
+        if(verbose) {
+                pid <- Sys.getpid()
+                cat("Starting cluster node:", pid, "\n")
+        }
         while(!inherits(task <- cluster_next_task(cl), "try-error")) {
                 result <- try({
                         msg <- capture.output({
