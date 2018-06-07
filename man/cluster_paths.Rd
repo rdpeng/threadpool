@@ -6,6 +6,9 @@
 \usage{
 cluster_paths(name)
 }
+\arguments{
+\item{name}{cluster name}
+}
 \description{
 The cluster 'name' ends up being a directory on the filesystem. Then, there
 separate files for the queues and evaluation environment.

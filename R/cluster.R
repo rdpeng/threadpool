@@ -3,6 +3,8 @@
 #'
 #' The cluster 'name' ends up being a directory on the filesystem. Then, there
 #' separate files for the queues and evaluation environment.
+#'
+#' @param name cluster name
 
 
 cluster_paths <- function(name) {
