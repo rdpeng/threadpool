@@ -129,9 +129,20 @@ cluster_run <- function(cl) {
         invisible(NULL)
 }
 
+message_log <- function(msg) {
+        msg
+}
+
 task_run <- function(task, envir) {
         result <- with(task, {
-                do.call(func, list(data), envir = envir)
+                msg <- capture.output({
+                        foutput <- do.call(func, list(data),
+                                          envir = envir)
+                })
+                if(length(msg) > 0) {
+                        message_log(msg)
+                }
+                foutput
         })
         result
 }
@@ -141,15 +152,15 @@ task_run <- function(task, envir) {
 #' Take the output from running a task and add it to the output queue
 #'
 #' @param cl a cluster object
-#' @param out the output from a task
+#' @param output the output from a task
 #'
 #' @importFrom queue enqueue
 #' @export
 #'
 
-cluster_finish_task <- function(cl, out) {
+cluster_finish_task <- function(cl, output) {
         outjob_q <- cl$outjob
-        enqueue(outjob_q, out)
+        enqueue(outjob_q, output)
 }
 
 

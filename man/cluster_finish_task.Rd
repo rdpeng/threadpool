@@ -4,12 +4,12 @@
 \alias{cluster_finish_task}
 \title{Finish a Cluster Task}
 \usage{
-cluster_finish_task(cl, out)
+cluster_finish_task(cl, output)
 }
 \arguments{
 \item{cl}{a cluster object}
 
-\item{out}{the output from a task}
+\item{output}{the output from a task}
 }
 \description{
 Take the output from running a task and add it to the output queue

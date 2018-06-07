@@ -9,14 +9,15 @@ dir()
 cl_name <- "cluster1"
 
 ## Generate some tasks
-n <- 500
+n <- 50
 x <- seq_len(n)
 x <- as.list(x)
 f <- function(num) {
         pid <- Sys.getpid()
         cat("PID ", pid, " is running task ", num, "\n",
-            file = "output.log", append = TRUE)
-        Sys.sleep(1)
+            file = sprintf("output-%d.log", pid),
+            append = TRUE)
+        ## Sys.sleep(0.5)
         list(output = paste0(pid, " is finished running ", num, "!"))
 }
 
@@ -24,6 +25,8 @@ f <- function(num) {
 initialize_cluster_queue(cl_name, x, f, env = globalenv())
 cl <- cluster_join(cl_name)
 cluster_run(cl)
+
+r <- cluster_results(cl)
 
 
 library(threadpool)

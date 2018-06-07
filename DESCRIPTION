@@ -1,7 +1,7 @@
 Package: threadpool
 Type: Package
 Title: Parallel Processing with a Thread Pool
-Imports: queue
+Imports: queue, digest
 Suggests: testthat
 Version: 0.1
 Authors@R: person(given = "Roger", family = "Peng", role = c("aut", "cre"), email = "rdpeng@gmail.com")
