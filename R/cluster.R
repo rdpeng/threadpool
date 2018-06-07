@@ -10,6 +10,7 @@
 cluster_paths <- function(name) {
         list(injob = file.path(name, sprintf("%s.in.q", basename(name))),
              outjob = file.path(name, sprintf("%s.out.q", basename(name))),
+             logfile = file.path(name, create_log_file(name)),
              env = file.path(name, sprintf("%s.env.rds", basename(name))))
 }
 
@@ -41,6 +42,7 @@ cluster_create <- function(name) {
         mapsize <- getOption("threadpool_default_mapsize") ## Needed for LMDB
         cl <- list(injob = create_queue(p$injob, mapsize = mapsize),
                    outjob = create_queue(p$outjob, mapsize = mapsize),
+                   logfile = p$logfile,
                    env = p$env,
                    name = name)
         cl
@@ -65,9 +67,14 @@ cluster_join <- function(name) {
         mapsize = getOption("threadpool_default_mapsize")  ## Needed for LMDB
         cl <- list(injob = init_queue(p$injob, mapsize = mapsize),
                    outjob = init_queue(p$outjob, mapsize = mapsize),
+                   logfile = p$logfile,
                    env = p$env,
                    name = name)
         cl
+}
+
+create_log_file <- function(name) {
+        sprintf("%s-%d.log", basename(name), Sys.getpid())
 }
 
 new_task <- function(data, func) {
@@ -122,27 +129,26 @@ cluster_run <- function(cl) {
         envir <- list2env(readRDS(cl$env))
         while(!inherits(task <- cluster_next_task(cl), "try-error")) {
                 result <- try({
-                        task_run(task, envir)
+                        msg <- capture.output({
+                                taskout <- task_run(task, envir)
+                        })
+                        if(length(msg) > 0) {
+                                message_log(cl, msg)
+                        }
+                        taskout
                 })
                 cluster_finish_task(cl, result)
         }
         invisible(NULL)
 }
 
-message_log <- function(msg) {
-        msg
+message_log <- function(cl, msg) {
+        cat(msg, file = cl$logfile, sep = "\n", append = TRUE)
 }
 
 task_run <- function(task, envir) {
         result <- with(task, {
-                msg <- capture.output({
-                        foutput <- do.call(func, list(data),
-                                          envir = envir)
-                })
-                if(length(msg) > 0) {
-                        message_log(msg)
-                }
-                foutput
+                do.call(func, list(data), envir = envir)
         })
         result
 }

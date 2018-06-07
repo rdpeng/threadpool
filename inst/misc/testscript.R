@@ -9,15 +9,13 @@ dir()
 cl_name <- "cluster1"
 
 ## Generate some tasks
-n <- 50
+n <- 500
 x <- seq_len(n)
 x <- as.list(x)
 f <- function(num) {
         pid <- Sys.getpid()
-        cat("PID ", pid, " is running task ", num, "\n",
-            file = sprintf("output-%d.log", pid),
-            append = TRUE)
-        ## Sys.sleep(0.5)
+        cat("PID ", pid, " is running task ", num, "\n")
+        Sys.sleep(1)
         list(output = paste0(pid, " is finished running ", num, "!"))
 }
 
