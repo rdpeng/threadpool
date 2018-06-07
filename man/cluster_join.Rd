@@ -4,12 +4,10 @@
 \alias{cluster_join}
 \title{Join a Cluster}
 \usage{
-cluster_join(name, mapsize = getOption("threadpool_default_mapsize"))
+cluster_join(name)
 }
 \arguments{
 \item{name}{name of the cluster}
-
-\item{mapsize}{\code{mapsize} argument for underlying LMDB database}
 }
 \value{
 A cluster object is returned.

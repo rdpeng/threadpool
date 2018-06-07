@@ -4,8 +4,7 @@
 \alias{initialize_cluster_queue}
 \title{Initialize Cluster Input Queue}
 \usage{
-initialize_cluster_queue(cl_name, x, f, envir = parent.frame(),
-  meta = list(), mapsize = NULL)
+initialize_cluster_queue(cl_name, x, f, envir = parent.frame())
 }
 \arguments{
 \item{cl_name}{cluster name}
@@ -15,10 +14,6 @@ initialize_cluster_queue(cl_name, x, f, envir = parent.frame(),
 \item{f}{a function to map to the data}
 
 \item{envir}{an environment within which to evaluate the function \code{f}}
-
-\item{meta}{arbitrary metadata for the applying the function \code{f}}
-
-\item{mapsize}{\code{mapsize} argument for underlying LMDB database}
 }
 \description{
 Intialize the cluster input queue by adding all of the jobs based on the

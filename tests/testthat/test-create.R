@@ -9,9 +9,6 @@ test_that("create cluster", {
         expect_true(file.exists(file.path(cl_name,
                                           sprintf("%s.out.q",
                                                   basename(cl_name)))))
-        expect_equal(cl$meta, file.path(cl_name,
-                                        sprintf("%s.meta.rds",
-                                                basename(cl_name))))
         expect_is(cl$injob, "queue")
         expect_is(cl$outjob, "queue")
 })

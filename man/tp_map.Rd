@@ -4,8 +4,7 @@
 \alias{tp_map}
 \title{Thread Pool Map}
 \usage{
-tp_map(x, f, cl_name, envir = parent.frame(), meta = list(), ncores = 2L,
-  mapsize = getOption("threadpool_default_mapsize"))
+tp_map(x, f, cl_name, envir = parent.frame(), ncores = 2L)
 }
 \arguments{
 \item{x}{an R object that will be coerced to a list}
@@ -16,11 +15,7 @@ tp_map(x, f, cl_name, envir = parent.frame(), meta = list(), ncores = 2L,
 
 \item{envir}{an environment within which to evaluate the function \code{f}}
 
-\item{meta}{arbitrary metadata needed for applying the function \code{f}}
-
 \item{ncores}{the number of cores to use}
-
-\item{mapsize}{\code{mapsize} argument for underlying LMDB database}
 }
 \value{
 a list containing the results

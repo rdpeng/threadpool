@@ -1,8 +1,13 @@
 
+#' Return cluster paths
+#'
+#' The cluster 'name' ends up being a directory on the filesystem. Then, there
+#' separate files for the queues and evaluation environment.
+
+
 cluster_paths <- function(name) {
         list(injob = file.path(name, sprintf("%s.in.q", basename(name))),
              outjob = file.path(name, sprintf("%s.out.q", basename(name))),
-             meta = file.path(name, sprintf("%s.meta.rds", basename(name))),
              env = file.path(name, sprintf("%s.env.rds", basename(name))))
 }
 
@@ -22,22 +27,20 @@ delete_cluster <- function(name) {
 
 #' Create a Cluster
 #'
-#' Create the input job queue, the output job queue, and the metadata path
-#' for a cluster
+#' Create the input job queue, the output job queue, and other cluster elements
 #'
 #' @param name the name of the cluster
-#' @param mapsize \code{mapsize} argument for underlying LMDB database
 #'
 #' @importFrom queue create_queue
 #' @export
 #'
-cluster_create <- function(name, mapsize = getOption("threadpool_default_mapsize")) {
+cluster_create <- function(name) {
         p <- cluster_paths(name)
+        mapsize <- getOption("threadpool_default_mapsize") ## Needed for LMDB
         cl <- list(injob = create_queue(p$injob, mapsize = mapsize),
-                     outjob = create_queue(p$outjob, mapsize = mapsize),
-                     meta = p$meta,
-                     env = p$env,
-                     name = name)
+                   outjob = create_queue(p$outjob, mapsize = mapsize),
+                   env = p$env,
+                   name = name)
         cl
 }
 
@@ -46,7 +49,6 @@ cluster_create <- function(name, mapsize = getOption("threadpool_default_mapsize
 #' Join a currently running cluster in order to execute jobs
 #'
 #' @param name name of the cluster
-#' @param mapsize \code{mapsize} argument for underlying LMDB database
 #'
 #' @description Given a cluster name, join that cluster and return a cluster
 #' object for subsequent passing to \code{cluster_run}.
@@ -56,11 +58,11 @@ cluster_create <- function(name, mapsize = getOption("threadpool_default_mapsize
 #' @importFrom queue init_queue
 #' @export
 #'
-cluster_join <- function(name, mapsize = getOption("threadpool_default_mapsize")) {
+cluster_join <- function(name) {
         p <- cluster_paths(name)
+        mapsize = getOption("threadpool_default_mapsize")  ## Needed for LMDB
         cl <- list(injob = init_queue(p$injob, mapsize = mapsize),
                    outjob = init_queue(p$outjob, mapsize = mapsize),
-                   meta = p$meta,
                    env = p$env,
                    name = name)
         cl
@@ -101,7 +103,6 @@ cluster_next_task <- function(cl) {
         task
 }
 
-
 #' Run Tasks in a Cluster
 #'
 #' Begin running tasks from a cluster queue
@@ -117,23 +118,19 @@ cluster_next_task <- function(cl) {
 #'
 cluster_run <- function(cl) {
         envir <- list2env(readRDS(cl$env))
-        meta <- readRDS(cl$meta)
         while(!inherits(task <- cluster_next_task(cl), "try-error")) {
-                result <- task_run(task, envir, meta)
-                output <- task_output(result)
-                cluster_finish_task(cl, output)
+                result <- try({
+                        task_run(task, envir)
+                })
+                cluster_finish_task(cl, result)
         }
         invisible(NULL)
 }
 
-task_run <- function(task, env, meta) {
+task_run <- function(task, envir) {
         result <- with(task, {
-                do.call(func, list(data, meta), envir = env)
+                do.call(func, list(data), envir = envir)
         })
-        result
-}
-
-task_output <- function(result) {
         result
 }
 
@@ -149,7 +146,8 @@ task_output <- function(result) {
 #'
 
 cluster_finish_task <- function(cl, out) {
-        enqueue(cl$outjob, out)
+        outjob_q <- cl$outjob
+        enqueue(outjob_q, out)
 }
 
 

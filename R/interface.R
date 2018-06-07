@@ -8,21 +8,18 @@
 #' @param x an R object that will be coerced to a list
 #' @param f a function to be mapped to the elements of \code{x}
 #' @param envir an environment within which to evaluate the function \code{f}
-#' @param meta arbitrary metadata needed for applying the function \code{f}
 #' @param cl_name an optional name for the cluster queue
 #' @param ncores the number of cores to use
-#' @param mapsize \code{mapsize} argument for underlying LMDB database
 #'
 #' @return a list containing the results
 #'
 #' @importFrom parallel mccollect
 #'
-tp_map <- function(x, f, cl_name, envir = parent.frame(), meta = list(),
-                   ncores = 2L,
-                   mapsize = getOption("threadpool_default_mapsize")) {
+tp_map <- function(x, f, cl_name, envir = parent.frame(),
+                   ncores = 2L) {
         f <- match.fun(f)
         x <- as.list(x)
-        initialize_cluster_queue(cl_name, x, f, envir, meta, mapsize)
+        initialize_cluster_queue(cl_name, x, f, envir)
         result <- cluster_add_nodes(cl_name, ncores)
         result
 }
@@ -59,27 +56,17 @@ cluster_add_nodes <- function(name, ncores = 1L) {
 #' @param x the data
 #' @param f a function to map to the data
 #' @param envir an environment within which to evaluate the function \code{f}
-#' @param meta arbitrary metadata for the applying the function \code{f}
-#' @param mapsize \code{mapsize} argument for underlying LMDB database
 
 #' @export
 #'
-initialize_cluster_queue <- function(cl_name, x, f, envir = parent.frame(),
-                                     meta = list(), mapsize = NULL) {
-        if(is.null(mapsize))
-                mapsize <- getOption("threadpool_default_mapsize")
-        cl <- cluster_create(cl_name, mapsize)
+initialize_cluster_queue <- function(cl_name, x, f, envir = parent.frame()) {
+        cl <- cluster_create(cl_name)
         for(i in seq_along(x)) {
                 task <- new_task(x[[i]], f)
                 cluster_add1_task(cl, task)
         }
-        exportMeta(cl, meta)
         exportEnv(cl, envir)
         cl_name
-}
-
-exportMeta <- function(cl, meta) {
-        saveRDS(meta, cl$meta, compress = FALSE)
 }
 
 exportEnv <- function(cl, envir) {

@@ -4,14 +4,11 @@
 \alias{cluster_create}
 \title{Create a Cluster}
 \usage{
-cluster_create(name, mapsize = getOption("threadpool_default_mapsize"))
+cluster_create(name)
 }
 \arguments{
 \item{name}{the name of the cluster}
-
-\item{mapsize}{\code{mapsize} argument for underlying LMDB database}
 }
 \description{
-Create the input job queue, the output job queue, and the metadata path
-for a cluster
+Create the input job queue, the output job queue, and other cluster elements
 }
