@@ -21,16 +21,22 @@
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
 
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-  
-  
+
+
+
 <meta property="og:title" content="Thread Pool Map — tp_map" />
 
 <meta property="og:description" content="Map a function in parallal across the elements of a list" />
 <meta name="twitter:card" content="summary" />
+
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -53,8 +59,12 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">threadpool</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">threadpool</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.1</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
@@ -71,6 +81,7 @@
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -78,20 +89,23 @@
       
       </header>
 
-      <div class="row">
+<div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Thread Pool Map</h1>
+    
+    <div class="hidden name"><code>tp_map.Rd</code></div>
     </div>
 
+    <div class="ref-description">
     
     <p>Map a function in parallal across the elements of a list</p>
     
+    </div>
 
-    <pre class="usage"><span class='fu'>tp_map</span>(<span class='no'>x</span>, <span class='no'>f</span>, <span class='kw'>meta</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>cl_name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>ncores</span> <span class='kw'>=</span> <span class='fl'>2L</span>,
-  <span class='kw'>wait_for_result</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>mapsize</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>tp_map</span>(<span class='no'>x</span>, <span class='no'>f</span>, <span class='no'>cl_name</span>, <span class='kw'>envir</span> <span class='kw'>=</span> <span class='fu'>parent.frame</span>(), <span class='kw'>ncores</span> <span class='kw'>=</span> <span class='fl'>2L</span>)</pre>
     
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
@@ -103,26 +117,22 @@
       <td><p>a function to be mapped to the elements of <code>x</code></p></td>
     </tr>
     <tr>
-      <th>meta</th>
-      <td><p>arbitrary metadata for the applying the function <code>f</code></p></td>
-    </tr>
-    <tr>
       <th>cl_name</th>
       <td><p>an optional name for the cluster queue</p></td>
+    </tr>
+    <tr>
+      <th>envir</th>
+      <td><p>an environment within which to evaluate the function <code>f</code></p></td>
     </tr>
     <tr>
       <th>ncores</th>
       <td><p>the number of cores to use</p></td>
     </tr>
-    <tr>
-      <th>wait_for_result</th>
-      <td><p>should we wait for all results to finish?</p></td>
-    </tr>
-    <tr>
-      <th>mapsize</th>
-      <td><p><code>mapsize</code> argument for underlying LMDB database</p></td>
-    </tr>
     </table>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>a list containing the results</p>
     
 
   </div>
@@ -130,14 +140,16 @@
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+      
+      <li><a href="#value">Value</a></li>
+          </ul>
 
   </div>
 </div>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Roger D. Peng.</p>
+  <p>Developed by Roger Peng.</p>
 </div>
 
 <div class="pkgdown">
@@ -147,5 +159,8 @@
       </footer>
    </div>
 
+  
+
   </body>
 </html>
+

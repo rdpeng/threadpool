@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Add Nodes to a Cluster — cluster_add_nodes • threadpool</title>
+<title>Read Results — cluster_results • threadpool</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="Add Nodes to a Cluster — cluster_add_nodes" />
+<meta property="og:title" content="Read Results — cluster_results" />
 
-<meta property="og:description" content="For an already-running cluster, add more nodes to execute tasks." />
+<meta property="og:description" content="Read the results of a cluster run from the output queue" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -92,35 +92,31 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Add Nodes to a Cluster</h1>
+    <h1>Read Results</h1>
     
-    <div class="hidden name"><code>cluster_add_nodes.Rd</code></div>
+    <div class="hidden name"><code>cluster_results.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>For an already-running cluster, add more nodes to execute tasks.</p>
+    <p>Read the results of a cluster run from the output queue</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>cluster_add_nodes</span>(<span class='no'>cl_name</span>, <span class='kw'>ncores</span> <span class='kw'>=</span> <span class='fl'>1L</span>)</pre>
+    <pre class="usage"><span class='fu'>cluster_results</span>(<span class='no'>cl</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>cl_name</th>
-      <td><p>name of the cluster</p></td>
-    </tr>
-    <tr>
-      <th>ncores</th>
-      <td><p>the number of nodes to add</p></td>
+      <th>cl</th>
+      <td><p>cluster object</p></td>
     </tr>
     </table>
     
-    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Because of the use of <code>mcparallel</code>, whis may not work on Windows.</p>
+    <p>a list with the results of the cluster output</p>
     
 
   </div>
@@ -129,7 +125,7 @@
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       
-      <li><a href="#note">Note</a></li>
+      <li><a href="#value">Value</a></li>
           </ul>
 
   </div>
