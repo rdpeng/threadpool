@@ -73,25 +73,6 @@ cluster_join <- function(name) {
         cl
 }
 
-create_log_file <- function(name, pid = Sys.getpid()) {
-        sprintf("%s-%d.log", basename(name), pid)
-}
-
-#' Show cluster node log file
-#'
-#' Show the output being sent to the cluster node log file
-#'
-#' @param name name of cluster
-#' @param pid process ID for cluster node
-#'
-#' @export
-
-show_log_file <- function(name, pid) {
-        path <- file.path(name, create_log_file(name, pid))
-        cmd <- sprintf("tail -f %s", path)
-        system(cmd)
-}
-
 new_task <- function(data, func) {
         list(data = data, func = func)
 }
@@ -189,5 +170,30 @@ cluster_finish_task <- function(cl, output) {
         outjob_q <- cl$outjob
         enqueue(outjob_q, output)
 }
+
+
+#' Read Results
+#'
+#' Read the results of a cluster run from the output queue
+#'
+#' @param cl cluster object
+#'
+#' @return a list with the results of the cluster output
+#'
+#' @importFrom digest digest
+#' @export
+#'
+cluster_results <- function(cl) {
+        output_q <- cl$outjob
+        env <- new.env(size = 10000L)
+        while(!inherits(try(out <- dequeue(output_q), silent = TRUE),
+                        "try-error")) {
+                key <- digest(out)
+                env[[key]] <- out
+        }
+        keys <- ls(env, all.names = TRUE)
+        mget(keys, env)
+}
+
 
 

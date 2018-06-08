@@ -76,31 +76,6 @@ exportEnv <- function(cl, envir) {
 }
 
 
-#' Read Results
-#'
-#' Read the results of a cluster run from the output queue
-#'
-#' @param cl cluster object
-#'
-#' @return a list with the results of the cluster output
-#'
-#' @importFrom digest digest
-#' @export
-#'
-cluster_results <- function(cl) {
-        output_q <- cl$outjob
-        env <- new.env(size = 10000L)
-        while(!inherits(try(out <- dequeue(output_q), silent = TRUE),
-                        "try-error")) {
-                key <- digest(out)
-                env[[key]] <- out
-        }
-        keys <- ls(env, all.names = TRUE)
-        mget(keys, env)
-}
-
-
-
 
 
 
