@@ -28,7 +28,7 @@ tp_map <- function(x, f, cl_name, envir = parent.frame(),
 #'
 #' For an already-running cluster, add more nodes to execute tasks.
 #'
-#' @param name name of the cluster
+#' @param cl_name name of the cluster
 #' @param ncores the number of nodes to add
 #'
 #' @importFrom parallel mcparallel
@@ -36,11 +36,11 @@ tp_map <- function(x, f, cl_name, envir = parent.frame(),
 #'
 #' @note Because of the use of \code{mcparallel}, whis may not work on Windows.
 #'
-cluster_add_nodes <- function(name, ncores = 1L) {
+cluster_add_nodes <- function(cl_name, ncores = 1L) {
         presult <- vector("list", length = ncores)
         for(i in seq_len(ncores)) {
                 presult[[i]] <- mcparallel({
-                        cl <- cluster_join(name)
+                        cl <- cluster_join(cl_name)
                         cluster_run(cl)
                 })
         }

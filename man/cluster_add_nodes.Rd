@@ -4,10 +4,10 @@
 \alias{cluster_add_nodes}
 \title{Add Nodes to a Cluster}
 \usage{
-cluster_add_nodes(name, ncores = 1L)
+cluster_add_nodes(cl_name, ncores = 1L)
 }
 \arguments{
-\item{name}{name of the cluster}
+\item{cl_name}{name of the cluster}
 
 \item{ncores}{the number of nodes to add}
 }
