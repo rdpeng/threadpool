@@ -38,6 +38,7 @@ delete_cluster <- function(name) {
 #' @export
 #'
 cluster_create <- function(name) {
+        dir.create(name)
         p <- cluster_paths(name)
         mapsize <- getOption("threadpool_default_mapsize") ## Needed for LMDB
         cl <- list(injob = create_queue(p$injob, mapsize = mapsize),
@@ -63,6 +64,8 @@ cluster_create <- function(name) {
 #' @export
 #'
 cluster_join <- function(name) {
+        if(!file.exists(name))
+                stop(sprintf("cluster '%s' does not exist", name))
         p <- cluster_paths(name)
         mapsize = getOption("threadpool_default_mapsize")  ## Needed for LMDB
         cl <- list(injob = init_queue(p$injob, mapsize = mapsize),
