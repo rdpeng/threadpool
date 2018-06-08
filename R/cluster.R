@@ -10,7 +10,7 @@
 cluster_paths <- function(name) {
         list(injob = file.path(name, sprintf("%s.in.q", basename(name))),
              outjob = file.path(name, sprintf("%s.out.q", basename(name))),
-             logfile = file.path(name, create_log_file(name)),
+             logfile = logfile_create(name),
              env = file.path(name, sprintf("%s.env.rds", basename(name))))
 }
 
