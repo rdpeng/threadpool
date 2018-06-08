@@ -123,6 +123,7 @@ cluster_next_task <- function(cl) {
 #'
 #' @return Nothing is returned.
 #'
+#' @importFrom utils capture.output
 #' @export
 #'
 cluster_run <- function(cl, verbose = TRUE) {

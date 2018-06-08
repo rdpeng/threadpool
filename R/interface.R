@@ -7,7 +7,7 @@
 #' @param cl_name name of the cluster
 #' @param ncores the number of nodes to add
 #'
-#' @importFrom parallel mcparallel
+#' @importFrom parallel mcparallel mccollect
 #' @export
 #'
 #' @note Because of the use of \code{mcparallel}, whis may not work on Windows.
