@@ -6,9 +6,9 @@ library(threadpool)
 setwd("~/tmp")
 dir()
 
-cl_name <- "cluster1"
 
 ## Generate some tasks
+cl_name <- "cluster1"
 n <- 500
 x <- seq_len(n)
 x <- as.list(x)
@@ -20,7 +20,7 @@ f <- function(num) {
 }
 
 ## Start up cluster
-initialize_cluster_queue(cl_name, x, f, env = globalenv())
+cluster_initialize(cl_name, x, f, env = globalenv())
 cl <- cluster_join(cl_name)
 cluster_run(cl)
 

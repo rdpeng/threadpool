@@ -40,21 +40,19 @@ You can install threadpool from GitHub with:
 
 ```{r gh-installation, eval = FALSE}
 # install.packages("remotes")
-library(remotes)
-install_github("rdpeng/threadpool")
+remotes::install_github("rdpeng/threadpool")
 ```
 
 The `threadpool` package makes use of the `thor` package by Rich FitzJohn. This package can be installed from GitHub with:
 
 ```{r gh-installation-thor, eval = FALSE}
-library(remotes)
-install_github("richfitz/thor")
+remotes::install_github("richfitz/thor")
 ```
 
 In addition, you need to install the `queue` package from GitHub with:
 
 ```{r gh-installation-queue, eval = FALSE}
-install_github("rdpeng/queue")
+remotes::install_github("rdpeng/queue")
 ```
 
 
@@ -65,15 +63,25 @@ This is a basic example of how you might invoke the `threadpool` package. The pr
 
 ```{r example, eval = TRUE}
 library(threadpool)
-library(queue)
-
-## Use the `tp_map()` function
 
 data(airquality)
-clname <- tp_map(airquality, function(x, meta) {
-        list(output = mean(x, na.rm = TRUE))
-})
+x <- as.list(airquality)
 
-cl <- cluster_join(clname)
-peek(cl$outjob)
+f <- function(x) {
+        mean(x, na.rm = TRUE)
+}
+
+## Initialize the cluster
+cluster_initialize("my_cluster", x, f)
+cl <- cluster_join("my_cluster")
+
+## Run jobs
+cluster_run(cl)
+
+## Gather the output
+r <- cluster_results(cl)
+r[1:3]
+
+## Clean up
+delete_cluster("my_cluster")
 ```
