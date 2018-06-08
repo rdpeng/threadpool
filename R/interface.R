@@ -59,7 +59,7 @@ cluster_add_nodes <- function(cl_name, ncores = 1L) {
 
 #' @export
 #'
-initialize_cluster_queue <- function(cl_name, x, f, envir = parent.frame()) {
+cluster_initialize <- function(cl_name, x, f, envir = parent.frame()) {
         cl <- cluster_create(cl_name)
         for(i in seq_along(x)) {
                 task <- new_task(x[[i]], f)
