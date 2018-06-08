@@ -195,7 +195,9 @@ cluster_results <- function(cl) {
                 env[[key]] <- out
         }
         keys <- ls(env, all.names = TRUE)
-        mget(keys, env)
+        results <- mget(keys, env)
+        names(results) <- NULL
+        results
 }
 
 
