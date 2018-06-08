@@ -61,7 +61,7 @@ remotes::install_github("rdpeng/queue")
 
 ## Example
 
-This is a basic example of how you might invoke the `threadpool` package. The primary user-facing function is `tp_map()`, which is can be thought of as a parallel version of `Map()`. 
+This is a basic example of how you might invoke the `threadpool` package. The basic approach is to initialize the cluster (which also adds tasks to the cluster), join the cluster, and then run it by starting the execution of jobs. Once the cluster is finished running, you can retrieve the results. Finally, once we are finished we can delete the cluster.
 
 ```{r example, eval = TRUE}
 library(threadpool)
