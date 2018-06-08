@@ -10,7 +10,9 @@
 #' @importFrom parallel mcparallel mccollect
 #' @export
 #'
-#' @note Because of the use of \code{mcparallel}, whis may not work on Windows.
+#' @note This function will only work on macOS and Unix-alikes as it uses the
+#' forking mechanism to launch the new nodes.
+#'
 #'
 cluster_add_nodes <- function(cl_name, ncores = 1L) {
         presult <- vector("list", length = ncores)

@@ -15,5 +15,6 @@ cluster_add_nodes(cl_name, ncores = 1L)
 For an already-running cluster, add more nodes to execute tasks.
 }
 \note{
-Because of the use of \code{mcparallel}, whis may not work on Windows.
+This function will only work on macOS and Unix-alikes as it uses the
+forking mechanism to launch the new nodes.
 }
