@@ -93,7 +93,7 @@ remotes<span class="op">::</span><span class="kw"><a href="http://www.rdocumenta
 <div id="example" class="section level2">
 <h2 class="hasAnchor">
 <a href="#example" class="anchor"></a>Example</h2>
-<p>This is a basic example of how you might invoke the <code>threadpool</code> package. The primary user-facing function is <code><a href="reference/tp_map.html">tp_map()</a></code>, which is can be thought of as a parallel version of <code>Map()</code>.</p>
+<p>This is a basic example of how you might invoke the <code>threadpool</code> package. The basic approach is to initialize the cluster (which also adds tasks to the cluster), join the cluster, and then run it by starting the execution of jobs. Once the cluster is finished running, you can retrieve the results. Finally, once we are finished we can delete the cluster.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(threadpool)
 
 <span class="kw">data</span>(airquality)
@@ -110,7 +110,7 @@ cl &lt;-<span class="st"> </span><span class="kw"><a href="reference/cluster_joi
 
 ## Run jobs
 <span class="kw"><a href="reference/cluster_run.html">cluster_run</a></span>(cl)
-<span class="co">#&gt; Starting cluster node: 52176</span>
+<span class="co">#&gt; Starting cluster node: 55965</span>
 
 ## Gather the output
 r &lt;-<span class="st"> </span><span class="kw"><a href="reference/cluster_results.html">cluster_results</a></span>(cl)
