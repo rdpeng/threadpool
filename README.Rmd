@@ -26,6 +26,8 @@ A few benefits of this model of parallel computing are
 
 * *Seamless switching to parallel mode*: It's easy to start and debug a job in single processor mode and then ramp up to parallel computing without needing to start the job over again.
 
+* *Overall job resizing*: If in the middle of a job run you decide you want to add more tasks, you can simply add them withouth having to start the whole job over again. 
+
 This package will be most useful in situations where the jobs being run
 
 * are embarassingly parallel, and so don't require complex communication between nodes;
