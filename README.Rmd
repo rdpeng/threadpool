@@ -32,6 +32,8 @@ This package will be most useful in situations where the jobs being run
 
 * are relatively long-running, on the order of hours or days; 
 
+* are being run on a batch/queued system where the availability of processors varies over time;
+
 * have individual tasks that are heterogeneous in their runtimes.
 
 ## Installation

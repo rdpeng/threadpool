@@ -26,6 +26,8 @@ This package will be most useful in situations where the jobs being run
 
 * are relatively long-running, on the order of hours or days; 
 
+* are being run on a batch/queued system where the availability of processors varies over time;
+
 * have individual tasks that are heterogeneous in their runtimes.
 
 ## Installation
@@ -76,7 +78,7 @@ cl <- cluster_join("my_cluster")
 
 ## Run jobs
 cluster_run(cl)
-#> Starting cluster node: 51930
+#> Starting cluster node: 52080
 
 ## Gather the output
 r <- cluster_results(cl)
