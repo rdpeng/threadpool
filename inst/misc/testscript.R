@@ -8,8 +8,8 @@ dir()
 
 
 ## Generate some tasks
-cl_name <- "cluster1"
-n <- 500
+cl_name <- "cluster"
+n <- 50
 x <- seq_len(n)
 x <- as.list(x)
 f <- function(num) {
@@ -25,10 +25,6 @@ cl <- cluster_join(cl_name)
 cluster_run(cl)
 
 r <- cluster_results(cl)
-
-
-library(threadpool)
-cluster_add_nodes(cl_name, 3)
 
 delete_cluster(cl_name)
 

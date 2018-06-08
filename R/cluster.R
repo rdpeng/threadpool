@@ -68,13 +68,13 @@ cluster_join <- function(name) {
                 stop(sprintf("cluster '%s' does not exist", name))
         p <- cluster_paths(name)
         mapsize = getOption("threadpool_default_mapsize")  ## Needed for LMDB
-        cl <- list(injob = init_queue(p$injob, mapsize = mapsize),
-                   outjob = init_queue(p$outjob, mapsize = mapsize),
-                   logfile = p$logfile,
-                   env = p$env,
-                   name = name)
-        cl
+        list(injob = init_queue(p$injob, mapsize = mapsize),
+             outjob = init_queue(p$outjob, mapsize = mapsize),
+             logfile = p$logfile,
+             env = p$env,
+             name = name)
 }
+
 
 new_task <- function(data, func) {
         list(data = data, func = func)

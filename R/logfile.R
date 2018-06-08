@@ -33,16 +33,18 @@ logfile_create <- function(name, pid = Sys.getpid()) {
 logfile_show <- function(name, pid) {
         if(missing(pid) && interactive()) {
                 logfiles <- list.files(logfile_dir(name), full.names = TRUE)
-
-                if(length(logfiles) > 0) {
+                if(length(logfiles) == 1L)
+                        path <- logfiles
+                else if(length(logfiles) > 0) {
                         idx <- seq_along(logfiles)
-                        cat(paste(idx, basename(logfiles)), sep = "\n")
+                        cat(paste0(idx, ") ", basename(logfiles)), sep = "\n")
                         num <- readline("Which log file? ")
                         num <- as.integer(num)
                         if(!(num %in% idx))
                                 stop("invalid selection")
                         path <- logfiles[num]
-                }
+                } else
+                        stop("there was a problem reading the log directory")
         } else
                 path <- logfile_path(name, pid)
         cmd <- sprintf("tail -f %s", path)
