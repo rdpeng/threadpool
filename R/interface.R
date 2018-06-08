@@ -1,29 +1,5 @@
 ## Higher level interface
 
-
-#' Thread Pool Map
-#'
-#' Map a function in parallal across the elements of a list
-#'
-#' @param x an R object that will be coerced to a list
-#' @param f a function to be mapped to the elements of \code{x}
-#' @param envir an environment within which to evaluate the function \code{f}
-#' @param cl_name an optional name for the cluster queue
-#' @param ncores the number of cores to use
-#'
-#' @return a list containing the results
-#'
-#' @importFrom parallel mccollect
-#'
-tp_map <- function(x, f, cl_name, envir = parent.frame(),
-                   ncores = 2L) {
-        f <- match.fun(f)
-        x <- as.list(x)
-        initialize_cluster_queue(cl_name, x, f, envir)
-        result <- cluster_add_nodes(cl_name, ncores)
-        result
-}
-
 #' Add Nodes to a Cluster
 #'
 #' For an already-running cluster, add more nodes to execute tasks.
