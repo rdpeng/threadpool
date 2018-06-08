@@ -7,11 +7,11 @@
 cluster_add_tasks(cl, x, f)
 }
 \arguments{
+\item{cl}{a cluster object}
+
 \item{x}{the data}
 
 \item{f}{function to be applied to the data}
-
-\item{cl_name}{a cluster object}
 }
 \description{
 Add a batch of tasks to a cluster

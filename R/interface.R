@@ -56,7 +56,7 @@ exportEnv <- function(cl, envir) {
 #'
 #' Add a batch of tasks to a cluster
 #'
-#' @param cl_name a cluster object
+#' @param cl a cluster object
 #' @param x the data
 #' @param f function to be applied to the data
 #'
