@@ -4,7 +4,8 @@
 \alias{cluster_map}
 \title{Map a function to data}
 \usage{
-cluster_map(x, f, cl_name, ncores = 1L, envir = parent.frame())
+cluster_map(x, f, cl_name, ncores = 1L, envir = parent.frame(),
+  cleanup = FALSE)
 }
 \arguments{
 \item{x}{the data}
@@ -14,6 +15,8 @@ cluster_map(x, f, cl_name, ncores = 1L, envir = parent.frame())
 \item{ncores}{the number of cores to uses}
 
 \item{envir}{the evaluation environment}
+
+\item{cleanup}{if TRUE, cluster is deleted at the end (default FALSE)}
 
 \item{function}{to be mapped to the data}
 }

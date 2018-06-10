@@ -83,10 +83,12 @@ cluster_add_tasks <- function(cl, x, f) {
 #' @param cl_name cluster name
 #' @param ncores the number of cores to uses
 #' @param envir the evaluation environment
+#' @param cleanup if TRUE, cluster is deleted at the end (default FALSE)
 #'
 #' @export
 #'
-cluster_map <- function(x, f, cl_name, ncores = 1L, envir = parent.frame()) {
+cluster_map <- function(x, f, cl_name, ncores = 1L, envir = parent.frame(),
+                        cleanup = FALSE) {
         f <- match.fun(f)
         x <- as.list(x)
         cluster_initialize(cl_name, x, f, envir)
@@ -95,6 +97,8 @@ cluster_map <- function(x, f, cl_name, ncores = 1L, envir = parent.frame()) {
         results <- cluster_reduce(cl)
         if(length(results) == length(x))
                 names(results) <- names(x)
+        if(cleanup)
+                delete_cluster(cl_name)
         results
 }
 
