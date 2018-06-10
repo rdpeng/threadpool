@@ -80,16 +80,22 @@ cluster_add_tasks <- function(cl, x, f) {
 #'
 #' @param x the data
 #' @param function to be mapped to the data
-#' @cl_name cluster name
+#' @param cl_name cluster name
+#' @param ncores the number of cores to uses
+#' @param envir the evaluation environment
 #'
+#' @export
 #'
 cluster_map <- function(x, f, cl_name, ncores = 1L, envir = parent.frame()) {
         f <- match.fun(f)
         x <- as.list(x)
         cluster_initialize(cl_name, x, f, envir)
         out <- cluster_add_nodes(cl_name, ncores)
-        cl <- cluster_join(cl_name)
-        cluster_reduce(cl)
+        cl <- cluster_join(cl_name)
+        results <- cluster_reduce(cl)
+        if(length(results) == length(x))
+                names(results) <- names(x)
+        results
 }
 
 
