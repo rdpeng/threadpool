@@ -187,7 +187,7 @@ cluster_finish_task <- function(cl, output) {
 #' @importFrom digest digest
 #' @export
 #'
-cluster_results <- function(cl) {
+cluster_reduce <- function(cl) {
         output_q <- cl$outjob
         env <- new.env(size = 10000L)
         while(!inherits(try(out <- dequeue(output_q), silent = TRUE),
