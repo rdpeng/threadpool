@@ -74,8 +74,22 @@ cluster_add_tasks <- function(cl, x, f) {
         invisible(NULL)
 }
 
-
-
-
+#' Map a function to data
+#'
+#' Cluster version of map to map a function to data elements
+#'
+#' @param x the data
+#' @param function to be mapped to the data
+#' @cl_name cluster name
+#'
+#'
+cluster_map <- function(x, f, cl_name, ncores = 1L, envir = parent.frame()) {
+        f <- match.fun(f)
+        x <- as.list(x)
+        cluster_initialize(cl_name, x, f, envir)
+        out <- cluster_add_nodes(cl_name, ncores)
+        cl <- cluster_join(cl_name)
+        cluster_reduce(cl)
+}
 
 
