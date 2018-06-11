@@ -2,6 +2,7 @@
 ## Test cluster
 
 library(threadpool)
+library(queue)
 
 dir()
 
@@ -21,6 +22,7 @@ f <- function(num) {
 ## Start up cluster
 cluster_initialize(cl_name, x, f, env = globalenv())
 cl <- cluster_join(cl_name)
+peek(cl$jobqueue)
 cluster_run(cl)
 
 r <- cluster_reduce(cl)
