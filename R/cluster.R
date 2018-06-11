@@ -206,4 +206,44 @@ cluster_reduce <- function(cl) {
 }
 
 
+#' Check for Abandoned Tasks
+#'
+#' Check the shelf for any abandoned tasks
+#'
+#' @param cl a cluster object
+#'
+#' @importFrom queue any_shelf
+#'
+#' @export
+#'
+abandoned <- function(cl) {
+        any_shelf(cl$jobqueue)
+}
+
+#' Re-queue Abandoned Tasks
+#'
+#' Place any abandoned tasks on the shelf in the input queue
+#'
+#' @param cl a cluster object
+#'
+#' @importFrom queue shelf2input
+#' @export
+#'
+requeue_abandoned <- function(cl) {
+        if(!abandoned(cl))
+                stop("there are no abandoned tasks")
+        job_q <- cl$jobqueue
+        shelf2input(job_q)
+}
+
+
+
+
+
+
+
+
+
+
+
 
