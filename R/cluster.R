@@ -5,16 +5,13 @@
 #' separate files for the queues and evaluation environment.
 #'
 #' @param name cluster name
+
+
 cluster_paths <- function(name) {
-        list(injob = path_cluster_queue(name, "in"),
-             workjob = path_cluster_queue(name, "work"),
-             outjob = path_cluster_queue(name, "out"),
+        list(injob = file.path(name, sprintf("%s.in.q", basename(name))),
+             outjob = file.path(name, sprintf("%s.out.q", basename(name))),
              logfile = logfile_create(name),
              env = file.path(name, sprintf("%s.env.rds", basename(name))))
-}
-
-path_cluster_queue <- function(name, type) {
-        file.path(name, sprintf("%s.%s.q", basename(name), type))
 }
 
 #' Delete a Cluster
@@ -45,7 +42,6 @@ cluster_create <- function(name) {
         p <- cluster_paths(name)
         mapsize <- getOption("threadpool_default_mapsize") ## Needed for LMDB
         cl <- list(injob = create_queue(p$injob, mapsize = mapsize),
-                   workjob = create_queue(p$workjob, mapsize = mapsize),
                    outjob = create_queue(p$outjob, mapsize = mapsize),
                    logfile = p$logfile,
                    env = p$env,
@@ -73,7 +69,6 @@ cluster_join <- function(name) {
         p <- cluster_paths(name)
         mapsize = getOption("threadpool_default_mapsize")  ## Needed for LMDB
         list(injob = init_queue(p$injob, mapsize = mapsize),
-             workjob = init_queue(p$workjob, mapsize = mapsize),
              outjob = init_queue(p$outjob, mapsize = mapsize),
              logfile = p$logfile,
              env = p$env,
