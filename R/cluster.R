@@ -22,6 +22,8 @@ cluster_paths <- function(name) {
 #' @export
 #'
 delete_cluster <- function(name) {
+        cl <- cluster_join(name)
+        delete_queue(cl$jobqueue)
         val <- unlink(name, recursive = TRUE)
         if(val > 0)
                 warning(sprintf("problem deleting cluster '%s'", name))
