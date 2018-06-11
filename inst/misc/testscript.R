@@ -3,7 +3,6 @@
 
 library(threadpool)
 
-setwd("~/tmp")
 dir()
 
 
