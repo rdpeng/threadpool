@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Finish a Cluster Task — cluster_finish_task • threadpool</title>
+<title>Shutdown a Cluster — cluster_shutdown • threadpool</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="Finish a Cluster Task — cluster_finish_task" />
+<meta property="og:title" content="Shutdown a Cluster — cluster_shutdown" />
 
-<meta property="og:description" content="Take the output from running a task and add it to the output queue" />
+<meta property="og:description" content="Shutdown a cluster by closing all open threads" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -92,18 +92,18 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Finish a Cluster Task</h1>
+    <h1>Shutdown a Cluster</h1>
     
-    <div class="hidden name"><code>cluster_finish_task.Rd</code></div>
+    <div class="hidden name"><code>cluster_shutdown.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Take the output from running a task and add it to the output queue</p>
+    <p>Shutdown a cluster by closing all open threads</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>cluster_finish_task</span>(<span class='no'>cl</span>, <span class='no'>job_task</span>, <span class='no'>output</span>)</pre>
+    <pre class="usage"><span class='fu'>cluster_shutdown</span>(<span class='no'>cl</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -111,14 +111,6 @@
     <tr>
       <th>cl</th>
       <td><p>a cluster object</p></td>
-    </tr>
-    <tr>
-      <th>job_task</th>
-      <td><p>a job_task object from the shelf</p></td>
-    </tr>
-    <tr>
-      <th>output</th>
-      <td><p>the output from a task</p></td>
     </tr>
     </table>
     

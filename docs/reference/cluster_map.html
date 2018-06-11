@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Finish a Cluster Task — cluster_finish_task • threadpool</title>
+<title>Map a function to data — cluster_map • threadpool</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="Finish a Cluster Task — cluster_finish_task" />
+<meta property="og:title" content="Map a function to data — cluster_map" />
 
-<meta property="og:description" content="Take the output from running a task and add it to the output queue" />
+<meta property="og:description" content="Cluster version of map to map a function to data elements" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -92,33 +92,46 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Finish a Cluster Task</h1>
+    <h1>Map a function to data</h1>
     
-    <div class="hidden name"><code>cluster_finish_task.Rd</code></div>
+    <div class="hidden name"><code>cluster_map.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Take the output from running a task and add it to the output queue</p>
+    <p>Cluster version of map to map a function to data elements</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>cluster_finish_task</span>(<span class='no'>cl</span>, <span class='no'>job_task</span>, <span class='no'>output</span>)</pre>
+    <pre class="usage"><span class='fu'>cluster_map</span>(<span class='no'>x</span>, <span class='no'>f</span>, <span class='no'>cl_name</span>, <span class='kw'>ncores</span> <span class='kw'>=</span> <span class='fl'>1L</span>, <span class='kw'>envir</span> <span class='kw'>=</span> <span class='fu'>parent.frame</span>(),
+  <span class='kw'>cleanup</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>cl</th>
-      <td><p>a cluster object</p></td>
+      <th>x</th>
+      <td><p>the data</p></td>
     </tr>
     <tr>
-      <th>job_task</th>
-      <td><p>a job_task object from the shelf</p></td>
+      <th>f</th>
+      <td><p>function to be mapped to the data</p></td>
     </tr>
     <tr>
-      <th>output</th>
-      <td><p>the output from a task</p></td>
+      <th>cl_name</th>
+      <td><p>cluster name</p></td>
+    </tr>
+    <tr>
+      <th>ncores</th>
+      <td><p>the number of cores to uses</p></td>
+    </tr>
+    <tr>
+      <th>envir</th>
+      <td><p>the evaluation environment</p></td>
+    </tr>
+    <tr>
+      <th>cleanup</th>
+      <td><p>if TRUE, cluster is deleted at the end (default FALSE)</p></td>
     </tr>
     </table>
     
