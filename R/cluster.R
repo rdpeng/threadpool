@@ -237,6 +237,18 @@ requeue_abandoned <- function(cl) {
 }
 
 
+#' Shutdown a Cluster
+#'
+#' Shutdown a cluster by closing all open threads
+#'
+#' @param cl a cluster object
+#'
+#' @export
+#'
+cluster_shutdown <- function(cl) {
+        cl$jobqueue$queue$close()
+}
+
 
 
 

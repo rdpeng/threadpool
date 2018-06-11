@@ -8,7 +8,7 @@ dir()
 
 ## Generate some tasks
 cl_name <- "cluster"
-n <- 500
+n <- 20
 x <- seq_len(n)
 x <- as.list(x)
 f <- function(num) {
@@ -25,6 +25,7 @@ cluster_run(cl)
 
 r <- cluster_reduce(cl)
 
+cluster_shutdown(cl)
 delete_cluster(cl_name)
 
 
