@@ -16,7 +16,7 @@ f <- function(num) {
         pid <- Sys.getpid()
         cat("PID ", pid, " is running task ", num, "\n")
         Sys.sleep(1)
-        list(output = paste0(pid, " is finished running ", num, "!"))
+        paste0(pid, " is finished running ", num, "!")
 }
 
 ## Start up cluster
