@@ -102,11 +102,12 @@ new_task <- function(data, func) {
 #'
 cluster_next_task <- function(cl) {
         job_q <- cl$jobqueue
-        task <- try({
+        job_task <- try({
                 key <- input2shelf(job_q)
-                shelf_get(job_q, key)
+                val <- shelf_get(job_q, key)
+                list(key = key, value = val)
         }, silent = TRUE)
-        task
+        job_task
 }
 
 #' Run Tasks in a Cluster
@@ -131,7 +132,8 @@ cluster_run <- function(cl, verbose = TRUE) {
                 pid <- Sys.getpid()
                 cat("Starting cluster node:", pid, "\n")
         }
-        while(!inherits(task <- cluster_next_task(cl), "try-error")) {
+        while(!inherits(job_task <- cluster_next_task(cl), "try-error")) {
+                task <- job_task$value
                 result <- try({
                         msg <- capture.output({
                                 taskout <- task_run(task, envir)
@@ -141,7 +143,7 @@ cluster_run <- function(cl, verbose = TRUE) {
                         }
                         taskout
                 })
-                cluster_finish_task(cl, result)
+                cluster_finish_task(cl, job_task, result)
         }
         invisible(NULL)
 }
@@ -162,15 +164,16 @@ task_run <- function(task, envir) {
 #' Take the output from running a task and add it to the output queue
 #'
 #' @param cl a cluster object
+#' @param job_task a job_task object from the shelf
 #' @param output the output from a task
 #'
 #' @importFrom queue enqueue
 #' @export
 #'
 
-cluster_finish_task <- function(cl, output) {
+cluster_finish_task <- function(cl, job_task, output) {
         job_q <- cl$jobqueue
-        enqueue(outjob_q, output)
+        shelf2output(job_q, job_task$key, output)
 }
 
 
@@ -186,9 +189,9 @@ cluster_finish_task <- function(cl, output) {
 #' @export
 #'
 cluster_reduce <- function(cl) {
-        output_q <- cl$outjob
+        job_q <- cl$jobqueue
         env <- new.env(size = 10000L)
-        while(!inherits(try(out <- dequeue(output_q), silent = TRUE),
+        while(!inherits(try(out <- dequeue(job_q), silent = TRUE),
                         "try-error")) {
                 key <- digest(out)
                 env[[key]] <- out
