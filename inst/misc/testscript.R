@@ -2,7 +2,6 @@
 ## Test cluster
 
 library(threadpool)
-library(queue)
 
 dir()
 
