@@ -17,6 +17,7 @@ cluster_paths <- function(name) {
 #'
 #' @param name cluster name
 #' @export
+#' @importFrom queue delete_queue
 #'
 delete_cluster <- function(name) {
         cl <- cluster_join(name)
@@ -100,15 +101,13 @@ new_task <- function(data, func) {
 #' @param cl a cluster object
 #'
 #' @return a task object
-#' @importFrom queue dequeue
+#' @importFrom queue input2shelf
 #' @export
 #'
 cluster_next_task <- function(cl) {
         job_q <- cl$jobqueue
         job_task <- try({
-                key <- input2shelf(job_q)
-                val <- shelf_get(job_q, key)
-                list(key = key, value = val)
+                input2shelf(job_q)
         }, silent = TRUE)
         job_task
 }
@@ -170,7 +169,7 @@ task_run <- function(task, envir) {
 #' @param job_task a job_task object from the shelf
 #' @param output the output from a task
 #'
-#' @importFrom queue enqueue
+#' @importFrom queue shelf2output
 #' @export
 #'
 
@@ -189,6 +188,7 @@ cluster_finish_task <- function(cl, job_task, output) {
 #' @return a list with the results of the cluster output
 #'
 #' @importFrom digest digest
+#' @importFrom queue dequeue
 #' @export
 #'
 cluster_reduce <- function(cl) {

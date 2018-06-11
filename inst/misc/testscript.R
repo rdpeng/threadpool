@@ -9,7 +9,7 @@ dir()
 
 ## Generate some tasks
 cl_name <- "cluster"
-n <- 50
+n <- 500
 x <- seq_len(n)
 x <- as.list(x)
 f <- function(num) {
@@ -49,6 +49,7 @@ is_empty_input(jq)
 is_empty_output(jq)
 jq$queue$list()
 
+dequeue(jq)
 
 delete_cluster(cl_name)
 

@@ -79,7 +79,7 @@ cluster_add_tasks <- function(cl, x, f) {
 #' Cluster version of map to map a function to data elements
 #'
 #' @param x the data
-#' @param function to be mapped to the data
+#' @param f function to be mapped to the data
 #' @param cl_name cluster name
 #' @param ncores the number of cores to uses
 #' @param envir the evaluation environment
