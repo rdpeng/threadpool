@@ -6,15 +6,9 @@
 #'
 #' @param name cluster name
 cluster_paths <- function(name) {
-        list(injob = path_cluster_queue(name, "in"),
-             workjob = path_cluster_queue(name, "work"),
-             outjob = path_cluster_queue(name, "out"),
+        list(jobqueue = file.path(name, sprintf("%s.q", basename(name))),
              logfile = logfile_create(name),
              env = file.path(name, sprintf("%s.env.rds", basename(name))))
-}
-
-path_cluster_queue <- function(name, type) {
-        file.path(name, sprintf("%s.%s.q", basename(name), type))
 }
 
 #' Delete a Cluster
@@ -37,20 +31,17 @@ delete_cluster <- function(name) {
 #'
 #' @param name the name of the cluster
 #'
-#' @importFrom queue create_queue
+#' @importFrom queue create_job_queue
 #' @export
 #'
 cluster_create <- function(name) {
         dir.create(name)
         p <- cluster_paths(name)
         mapsize <- getOption("threadpool_default_mapsize") ## Needed for LMDB
-        cl <- list(injob = create_queue(p$injob, mapsize = mapsize),
-                   workjob = create_queue(p$workjob, mapsize = mapsize),
-                   outjob = create_queue(p$outjob, mapsize = mapsize),
-                   logfile = p$logfile,
-                   env = p$env,
-                   name = name)
-        cl
+        list(jobqueue = create_job_queue(p$jobqueue, mapsize = mapsize),
+             logfile = p$logfile,
+             env = p$env,
+             name = name)
 }
 
 #' Join a Cluster
@@ -64,7 +55,7 @@ cluster_create <- function(name) {
 #'
 #' @return A cluster object is returned.
 #'
-#' @importFrom queue init_queue
+#' @importFrom queue init_job_queue
 #' @export
 #'
 cluster_join <- function(name) {
@@ -72,18 +63,12 @@ cluster_join <- function(name) {
                 stop(sprintf("cluster '%s' does not exist", name))
         p <- cluster_paths(name)
         mapsize = getOption("threadpool_default_mapsize")  ## Needed for LMDB
-        list(injob = init_queue(p$injob, mapsize = mapsize),
-             workjob = init_queue(p$workjob, mapsize = mapsize),
-             outjob = init_queue(p$outjob, mapsize = mapsize),
+        list(jobqueue = init_job_queue(p$jobqueue, mapsize = mapsize),
              logfile = p$logfile,
              env = p$env,
              name = name)
 }
 
-
-new_task <- function(data, func) {
-        list(data = data, func = func)
-}
 
 #' Add One Task to a Cluster
 #'
@@ -96,9 +81,14 @@ new_task <- function(data, func) {
 #' @export
 #'
 cluster_add1_task <- function(cl, task) {
-        injob_q <- cl$injob
-        enqueue(injob_q, task)
+        job_q <- cl$jobqueue
+        enqueue(job_q, task)
 }
+
+new_task <- function(data, func) {
+        list(data = data, func = func)
+}
+
 
 #' Retrieve the Next Task
 #'
@@ -111,8 +101,11 @@ cluster_add1_task <- function(cl, task) {
 #' @export
 #'
 cluster_next_task <- function(cl) {
-        injob_q <- cl$injob
-        task <- try(dequeue(injob_q), silent = TRUE)
+        job_q <- cl$jobqueue
+        task <- try({
+                key <- input2shelf(job_q)
+                shelf_get(job_q, key)
+        }, silent = TRUE)
         task
 }
 
@@ -176,7 +169,7 @@ task_run <- function(task, envir) {
 #'
 
 cluster_finish_task <- function(cl, output) {
-        outjob_q <- cl$outjob
+        job_q <- cl$jobqueue
         enqueue(outjob_q, output)
 }
 
