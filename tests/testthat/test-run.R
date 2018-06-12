@@ -1,4 +1,4 @@
-test_that("cluster run" {
+test_that("cluster run", {
         cl_name <- "cluster"
         n <- 20L
         x <- as.list(seq_len(n))
