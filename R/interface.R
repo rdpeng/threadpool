@@ -34,22 +34,24 @@ cluster_add_nodes <- function(cl_name, ncores = 1L) {
 #' @param x the data
 #' @param f a function to map to the data
 #' @param envir an environment within which to evaluate the function \code{f}
-
+#'
+#' @return a cluster object
 #' @export
 #'
 cluster_initialize <- function(cl_name, x, f, envir = parent.frame()) {
         f <- match.fun(f)
         x <- as.list(x)
         cl <- cluster_create(cl_name)
-        cluster_add_tasks(cl, x, f)
-        exportEnv(cl, envir)
-        cl_name
+        cl <- cluster_add_tasks(cl, x, f)
+        cl <- exportEnv(cl, envir)
+        cl
 }
 
 exportEnv <- function(cl, envir) {
         objnames <- ls(envir, all.names = TRUE)
         objlist <- mget(objnames, envir)
         saveRDS(objlist, cl$env, compress = FALSE)
+        cl
 }
 
 

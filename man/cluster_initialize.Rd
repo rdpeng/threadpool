@@ -15,6 +15,9 @@ cluster_initialize(cl_name, x, f, envir = parent.frame())
 
 \item{envir}{an environment within which to evaluate the function \code{f}}
 }
+\value{
+a cluster object
+}
 \description{
 Intialize the cluster input queue by adding all of the jobs based on the
 input data
