@@ -62,6 +62,7 @@ exportEnv <- function(cl, envir) {
 #' @param x the data
 #' @param f function to be applied to the data
 #'
+#' @importFrom queue enqueue
 #' @export
 
 cluster_add_tasks <- function(cl, x, f) {
@@ -69,9 +70,9 @@ cluster_add_tasks <- function(cl, x, f) {
         x <- as.list(x)
         for(i in seq_along(x)) {
                 task <- new_task(x[[i]], f)
-                cluster_add1_task(cl, task)
+                enqueue(cl$jobqueue, task)
         }
-        invisible(NULL)
+        cl
 }
 
 #' Map a function to data

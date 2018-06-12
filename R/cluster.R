@@ -65,28 +65,12 @@ cluster_join <- function(name) {
                 stop(sprintf("cluster '%s' does not exist", name))
         p <- cluster_paths(name)
         mapsize = getOption("threadpool_default_mapsize")  ## Needed for LMDB
-        cl <- list(jobqueue = init_job_queue(p$jobqueue, mapsize = mapsize),
-                   logfile = p$logfile,
-                   env = p$env,
-                   name = name)
-        cl
+        list(jobqueue = init_job_queue(p$jobqueue, mapsize = mapsize),
+             logfile = p$logfile,
+             env = p$env,
+             name = name)
 }
 
-
-#' Add One Task to a Cluster
-#'
-#' Add a task to the input queue of a cluster
-#'
-#' @param cl a cluster object
-#' @param task a task object
-#'
-#' @importFrom queue enqueue
-#' @export
-#'
-cluster_add1_task <- function(cl, task) {
-        job_q <- cl$jobqueue
-        enqueue(job_q, task)
-}
 
 new_task <- function(data, func) {
         list(data = data, func = func)
