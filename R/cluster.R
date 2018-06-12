@@ -123,7 +123,7 @@ cluster_run <- function(cl, verbose = TRUE) {
                         msg <- capture.output({
                                 taskout <- task_run(task, envir)
                         })
-                        if(length(msg) > 0) {
+                        if(length(msg) > 0L) {
                                 message_log(cl, msg)
                         }
                         taskout
