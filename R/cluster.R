@@ -91,7 +91,7 @@ cluster_next_task <- function(cl) {
         job_q <- cl$jobqueue
         job_task <- try({
                 input2shelf(job_q)
-        }, silent = FALSE)
+        }, silent = TRUE)
         job_task
 }
 
@@ -178,7 +178,7 @@ cluster_finish_task <- function(cl, job_task, output) {
 cluster_reduce <- function(cl) {
         job_q <- cl$jobqueue
         env <- new.env(size = 10000L)
-        while(!inherits(try(out <- dequeue(job_q), silent = FALSE),
+        while(!inherits(try(out <- dequeue(job_q), silent = TRUE),
                         "try-error")) {
                 key <- digest(out)
                 env[[key]] <- out
