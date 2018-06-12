@@ -6,15 +6,9 @@
 #'
 #' @param name cluster name
 cluster_paths <- function(name) {
-        list(injob = path_cluster_queue(name, "in"),
-             workjob = path_cluster_queue(name, "work"),
-             outjob = path_cluster_queue(name, "out"),
+        list(jobqueue = file.path(name, sprintf("%s.q", basename(name))),
              logfile = logfile_create(name),
              env = file.path(name, sprintf("%s.env.rds", basename(name))))
-}
-
-path_cluster_queue <- function(name, type) {
-        file.path(name, sprintf("%s.%s.q", basename(name), type))
 }
 
 #' Delete a Cluster
@@ -25,6 +19,8 @@ path_cluster_queue <- function(name, type) {
 #' @export
 #'
 delete_cluster <- function(name) {
+        cl <- cluster_join(name)
+        cluster_shutdown(cl)
         val <- unlink(name, recursive = TRUE)
         if(val > 0)
                 warning(sprintf("problem deleting cluster '%s'", name))
@@ -37,20 +33,17 @@ delete_cluster <- function(name) {
 #'
 #' @param name the name of the cluster
 #'
-#' @importFrom queue create_queue
+#' @importFrom queue create_job_queue
 #' @export
 #'
 cluster_create <- function(name) {
         dir.create(name)
         p <- cluster_paths(name)
         mapsize <- getOption("threadpool_default_mapsize") ## Needed for LMDB
-        cl <- list(injob = create_queue(p$injob, mapsize = mapsize),
-                   workjob = create_queue(p$workjob, mapsize = mapsize),
-                   outjob = create_queue(p$outjob, mapsize = mapsize),
-                   logfile = p$logfile,
-                   env = p$env,
-                   name = name)
-        cl
+        list(jobqueue = create_job_queue(p$jobqueue, mapsize = mapsize),
+             logfile = p$logfile,
+             env = p$env,
+             name = name)
 }
 
 #' Join a Cluster
@@ -64,7 +57,7 @@ cluster_create <- function(name) {
 #'
 #' @return A cluster object is returned.
 #'
-#' @importFrom queue init_queue
+#' @importFrom queue init_job_queue
 #' @export
 #'
 cluster_join <- function(name) {
@@ -72,9 +65,7 @@ cluster_join <- function(name) {
                 stop(sprintf("cluster '%s' does not exist", name))
         p <- cluster_paths(name)
         mapsize = getOption("threadpool_default_mapsize")  ## Needed for LMDB
-        list(injob = init_queue(p$injob, mapsize = mapsize),
-             workjob = init_queue(p$workjob, mapsize = mapsize),
-             outjob = init_queue(p$outjob, mapsize = mapsize),
+        list(jobqueue = init_job_queue(p$jobqueue, mapsize = mapsize),
              logfile = p$logfile,
              env = p$env,
              name = name)
@@ -85,20 +76,6 @@ new_task <- function(data, func) {
         list(data = data, func = func)
 }
 
-#' Add One Task to a Cluster
-#'
-#' Add a task to the input queue of a cluster
-#'
-#' @param cl a cluster object
-#' @param task a task object
-#'
-#' @importFrom queue enqueue
-#' @export
-#'
-cluster_add1_task <- function(cl, task) {
-        injob_q <- cl$injob
-        enqueue(injob_q, task)
-}
 
 #' Retrieve the Next Task
 #'
@@ -107,13 +84,15 @@ cluster_add1_task <- function(cl, task) {
 #' @param cl a cluster object
 #'
 #' @return a task object
-#' @importFrom queue dequeue
+#' @importFrom queue input2shelf
 #' @export
 #'
 cluster_next_task <- function(cl) {
-        injob_q <- cl$injob
-        task <- try(dequeue(injob_q), silent = TRUE)
-        task
+        job_q <- cl$jobqueue
+        job_task <- try({
+                input2shelf(job_q)
+        }, silent = FALSE)
+        job_task
 }
 
 #' Run Tasks in a Cluster
@@ -126,7 +105,7 @@ cluster_next_task <- function(cl) {
 #' @description This function takes information about a cluster and begins
 #' reading and executing tasks from the associated input queue.
 #'
-#' @return Nothing is returned.
+#' @return the cluster object is returned
 #'
 #' @importFrom utils capture.output
 #' @export
@@ -138,7 +117,8 @@ cluster_run <- function(cl, verbose = TRUE) {
                 pid <- Sys.getpid()
                 cat("Starting cluster node:", pid, "\n")
         }
-        while(!inherits(task <- cluster_next_task(cl), "try-error")) {
+        while(!inherits(job_task <- cluster_next_task(cl), "try-error")) {
+                task <- job_task$value
                 result <- try({
                         msg <- capture.output({
                                 taskout <- task_run(task, envir)
@@ -148,9 +128,9 @@ cluster_run <- function(cl, verbose = TRUE) {
                         }
                         taskout
                 })
-                cluster_finish_task(cl, result)
+                cl <- cluster_finish_task(cl, job_task, result)
         }
-        invisible(NULL)
+        invisible(cl)
 }
 
 message_log <- function(cl, msg) {
@@ -169,15 +149,17 @@ task_run <- function(task, envir) {
 #' Take the output from running a task and add it to the output queue
 #'
 #' @param cl a cluster object
+#' @param job_task a job_task object from the shelf
 #' @param output the output from a task
 #'
-#' @importFrom queue enqueue
+#' @importFrom queue shelf2output
 #' @export
 #'
 
-cluster_finish_task <- function(cl, output) {
-        outjob_q <- cl$outjob
-        enqueue(outjob_q, output)
+cluster_finish_task <- function(cl, job_task, output) {
+        job_q <- cl$jobqueue
+        shelf2output(job_q, job_task$key, output)
+        cl
 }
 
 
@@ -190,12 +172,13 @@ cluster_finish_task <- function(cl, output) {
 #' @return a list with the results of the cluster output
 #'
 #' @importFrom digest digest
+#' @importFrom queue dequeue
 #' @export
 #'
 cluster_reduce <- function(cl) {
-        output_q <- cl$outjob
+        job_q <- cl$jobqueue
         env <- new.env(size = 10000L)
-        while(!inherits(try(out <- dequeue(output_q), silent = TRUE),
+        while(!inherits(try(out <- dequeue(job_q), silent = FALSE),
                         "try-error")) {
                 key <- digest(out)
                 env[[key]] <- out
@@ -205,6 +188,59 @@ cluster_reduce <- function(cl) {
         names(results) <- NULL
         results
 }
+
+
+#' Check for Abandoned Tasks
+#'
+#' Check the shelf for any abandoned tasks
+#'
+#' @param cl a cluster object
+#'
+#' @importFrom queue any_shelf
+#'
+#' @export
+#'
+abandoned <- function(cl) {
+        any_shelf(cl$jobqueue)
+}
+
+#' Re-queue Abandoned Tasks
+#'
+#' Place any abandoned tasks on the shelf in the input queue
+#'
+#' @param cl a cluster object
+#'
+#' @importFrom queue shelf2input
+#' @export
+#'
+requeue_abandoned <- function(cl) {
+        if(!abandoned(cl))
+                stop("there are no abandoned tasks")
+        job_q <- cl$jobqueue
+        shelf2input(job_q)
+        invisible(cl)
+}
+
+
+#' Shutdown a Cluster
+#'
+#' Shutdown a cluster by closing all open threads
+#'
+#' @param cl a cluster object
+#'
+#' @export
+#'
+cluster_shutdown <- function(cl) {
+        cl$jobqueue$queue$close()
+}
+
+
+
+
+
+
+
+
 
 
 

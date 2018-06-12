@@ -34,22 +34,24 @@ cluster_add_nodes <- function(cl_name, ncores = 1L) {
 #' @param x the data
 #' @param f a function to map to the data
 #' @param envir an environment within which to evaluate the function \code{f}
-
+#'
+#' @return a cluster object
 #' @export
 #'
 cluster_initialize <- function(cl_name, x, f, envir = parent.frame()) {
         f <- match.fun(f)
         x <- as.list(x)
         cl <- cluster_create(cl_name)
-        cluster_add_tasks(cl, x, f)
-        exportEnv(cl, envir)
-        cl_name
+        cl <- cluster_add_tasks(cl, x, f)
+        cl <- exportEnv(cl, envir)
+        cl
 }
 
 exportEnv <- function(cl, envir) {
         objnames <- ls(envir, all.names = TRUE)
         objlist <- mget(objnames, envir)
         saveRDS(objlist, cl$env, compress = FALSE)
+        cl
 }
 
 
@@ -62,6 +64,7 @@ exportEnv <- function(cl, envir) {
 #' @param x the data
 #' @param f function to be applied to the data
 #'
+#' @importFrom queue enqueue
 #' @export
 
 cluster_add_tasks <- function(cl, x, f) {
@@ -69,9 +72,9 @@ cluster_add_tasks <- function(cl, x, f) {
         x <- as.list(x)
         for(i in seq_along(x)) {
                 task <- new_task(x[[i]], f)
-                cluster_add1_task(cl, task)
+                enqueue(cl$jobqueue, task)
         }
-        invisible(NULL)
+        cl
 }
 
 #' Map a function to data
@@ -79,7 +82,7 @@ cluster_add_tasks <- function(cl, x, f) {
 #' Cluster version of map to map a function to data elements
 #'
 #' @param x the data
-#' @param function to be mapped to the data
+#' @param f function to be mapped to the data
 #' @param cl_name cluster name
 #' @param ncores the number of cores to uses
 #' @param envir the evaluation environment

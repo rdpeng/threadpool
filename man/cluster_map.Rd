@@ -10,6 +10,8 @@ cluster_map(x, f, cl_name, ncores = 1L, envir = parent.frame(),
 \arguments{
 \item{x}{the data}
 
+\item{f}{function to be mapped to the data}
+
 \item{cl_name}{cluster name}
 
 \item{ncores}{the number of cores to uses}
@@ -17,8 +19,6 @@ cluster_map(x, f, cl_name, ncores = 1L, envir = parent.frame(),
 \item{envir}{the evaluation environment}
 
 \item{cleanup}{if TRUE, cluster is deleted at the end (default FALSE)}
-
-\item{function}{to be mapped to the data}
 }
 \description{
 Cluster version of map to map a function to data elements

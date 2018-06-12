@@ -4,10 +4,12 @@
 \alias{cluster_finish_task}
 \title{Finish a Cluster Task}
 \usage{
-cluster_finish_task(cl, output)
+cluster_finish_task(cl, job_task, output)
 }
 \arguments{
 \item{cl}{a cluster object}
+
+\item{job_task}{a job_task object from the shelf}
 
 \item{output}{the output from a task}
 }

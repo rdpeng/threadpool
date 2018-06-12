@@ -12,7 +12,7 @@ cluster_run(cl, verbose = TRUE)
 \item{verbose}{print diagnostic messages?}
 }
 \value{
-Nothing is returned.
+the cluster object is returned
 }
 \description{
 This function takes information about a cluster and begins
