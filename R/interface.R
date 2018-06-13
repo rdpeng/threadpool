@@ -22,7 +22,8 @@ cluster_add_nodes <- function(cl_name, ncores = 1L) {
                         cluster_run(cl)
                 })
         }
-        mccollect(presult)
+        r <- mccollect(presult)
+        invisible(r)
 }
 
 #' Initialize Cluster Input Queue
@@ -44,7 +45,7 @@ cluster_initialize <- function(cl_name, x, f, envir = parent.frame()) {
         cl <- cluster_create(cl_name)
         cl <- cluster_add_tasks(cl, x, f)
         cl <- exportEnv(cl, envir)
-        cl
+        invisible(cl)
 }
 
 exportEnv <- function(cl, envir) {
@@ -74,7 +75,7 @@ cluster_add_tasks <- function(cl, x, f) {
                 task <- new_task(x[[i]], f)
                 enqueue(cl$jobqueue, task)
         }
-        cl
+        invisible(cl)
 }
 
 #' Map a function to data
