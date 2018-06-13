@@ -90,13 +90,15 @@ cluster_add_tasks <- function(cl, x, f) {
 #'
 #' @export
 #'
-cluster_map <- function(x, f, cl_name, ncores = 1L, envir = parent.frame(),
-                        cleanup = FALSE) {
+cluster_map <- function(x, f, cl_name = NULL, ncores = 1L,
+                        envir = parent.frame(), cleanup = FALSE) {
         f <- match.fun(f)
         x <- as.list(x)
-        cluster_initialize(cl_name, x, f, envir)
+
+        if(is.null(cl_name))
+                cl_name <- tempfile("cluster-")
+        cl <- cluster_initialize(cl_name, x, f, envir)
         out <- cluster_add_nodes(cl_name, ncores)
-        cl <- cluster_join(cl_name)
         results <- cluster_reduce(cl)
         if(length(results) == length(x))
                 names(results) <- names(x)
