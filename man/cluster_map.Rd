@@ -4,7 +4,7 @@
 \alias{cluster_map}
 \title{Map a function to data}
 \usage{
-cluster_map(x, f, cl_name, ncores = 1L, envir = parent.frame(),
+cluster_map(x, f, cl_name = NULL, ncores = 1L, envir = parent.frame(),
   cleanup = FALSE)
 }
 \arguments{
