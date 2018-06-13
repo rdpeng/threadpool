@@ -16,3 +16,15 @@ test_that("cluster run", {
 
         delete_cluster(cl_name)
 })
+
+
+test_that("cluster map", {
+        x <- 1:100
+        f <- function(x) {
+                as.character(x)
+        }
+        res <- cluster_map(x, f, ncores = 2L)
+        res <- unlist(res)
+        expect_equal(length(res), length(x))
+        expect_is(res, "character")
+})
