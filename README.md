@@ -65,14 +65,11 @@ f <- function(x) {
 }
 
 ## Initialize the cluster
-cluster_initialize("my_cluster", x, f)
-#> Warning in dir.create(name): 'my_cluster' already exists
-#> [1] "my_cluster"
-cl <- cluster_join("my_cluster")
+cl <- cluster_initialize("my_cluster", x, f)
 
 ## Run jobs
-cluster_run(cl)
-#> Starting cluster node: 2791
+cl <- cluster_run(cl)
+#> Starting cluster node: 53666
 
 ## Gather the output
 r <- cluster_reduce(cl)

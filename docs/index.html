@@ -105,12 +105,11 @@ f &lt;-<span class="st"> </span>function(x) {
 }
 
 ## Initialize the cluster
-<span class="kw"><a href="reference/cluster_initialize.html">cluster_initialize</a></span>(<span class="st">"my_cluster"</span>, x, f)
-cl &lt;-<span class="st"> </span><span class="kw"><a href="reference/cluster_join.html">cluster_join</a></span>(<span class="st">"my_cluster"</span>)
+cl &lt;-<span class="st"> </span><span class="kw"><a href="reference/cluster_initialize.html">cluster_initialize</a></span>(<span class="st">"my_cluster"</span>, x, f)
 
 ## Run jobs
-<span class="kw"><a href="reference/cluster_run.html">cluster_run</a></span>(cl)
-<span class="co">#&gt; Starting cluster node: 48803</span>
+cl &lt;-<span class="st"> </span><span class="kw"><a href="reference/cluster_run.html">cluster_run</a></span>(cl)
+<span class="co">#&gt; Starting cluster node: 53733</span>
 
 ## Gather the output
 r &lt;-<span class="st"> </span><span class="kw"><a href="reference/cluster_reduce.html">cluster_reduce</a></span>(cl)
@@ -134,7 +133,7 @@ r[<span class="dv">1</span>:<span class="dv">3</span>]
     <div class="links">
 <h2>Links</h2>
 <ul class="list-unstyled">
-<li>Report a bug at <br><a href="NA">NA</a>
+<li>Report a bug at <br><a href="https://github.com/rdpeng/threadpool/issues">https://​github.com/​rdpeng/​threadpool/​issues</a>
 </li>
 </ul>
 </div>

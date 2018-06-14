@@ -76,11 +76,10 @@ f <- function(x) {
 }
 
 ## Initialize the cluster
-cluster_initialize("my_cluster", x, f)
-cl <- cluster_join("my_cluster")
+cl <- cluster_initialize("my_cluster", x, f)
 
 ## Run jobs
-cluster_run(cl)
+cl <- cluster_run(cl)
 
 ## Gather the output
 r <- cluster_reduce(cl)
