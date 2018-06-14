@@ -198,6 +198,7 @@ cluster_reduce <- function(cl) {
 #'
 #' @importFrom queue any_shelf
 #'
+#' @return the number of items on the shelf
 #' @export
 #'
 abandoned <- function(cl) {

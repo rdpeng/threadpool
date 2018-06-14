@@ -9,6 +9,9 @@ abandoned(cl)
 \arguments{
 \item{cl}{a cluster object}
 }
+\value{
+the number of items on the shelf
+}
 \description{
 Check the shelf for any abandoned tasks
 }
