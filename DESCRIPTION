@@ -12,4 +12,3 @@ LazyData: true
 RoxygenNote: 6.0.1
 Remotes: rdpeng/queue
 BugReports: https://github.com/rdpeng/threadpool/issues
-
