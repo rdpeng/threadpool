@@ -140,11 +140,11 @@ exportEnv <- function(cl, envir) {
 cluster_join <- function(name) {
         if(!file.exists(name))
                 stop(sprintf("cluster '%s' does not exist", name))
-        p <- cluster_paths(name)
+        path <- cluster_paths(name)
         mapsize = getOption("threadpool_default_mapsize")  ## Needed for LMDB
-        list(jobqueue = init_job_queue(p$jobqueue, mapsize = mapsize),
-             logfile = p$logfile,
-             env = p$env,
+        list(jobqueue = init_job_queue(path$jobqueue, mapsize = mapsize),
+             logfile = path$logfile,
+             env = path$env,
              name = name)
 }
 

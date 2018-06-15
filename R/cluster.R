@@ -21,11 +21,11 @@ cluster_paths <- function(name) {
 #'
 cluster_create <- function(name) {
         dir.create(name)
-        p <- cluster_paths(name)
+        path <- cluster_paths(name)
         mapsize <- getOption("threadpool_default_mapsize") ## Needed for LMDB
-        list(jobqueue = create_job_queue(p$jobqueue, mapsize = mapsize),
-             logfile = p$logfile,
-             env = p$env,
+        list(jobqueue = create_job_queue(path$jobqueue, mapsize = mapsize),
+             logfile = path$logfile,
+             env = path$env,
              name = name)
 }
 
